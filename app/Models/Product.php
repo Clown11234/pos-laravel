@@ -56,4 +56,10 @@ class Product extends Model
     {
         return app()->getLocale() === 'mm' ? $this->name_mm : $this->name_en;
     }
+
+
+    public function scopeActive(Builder $query)
+    {
+        return $query;
+    }
 }

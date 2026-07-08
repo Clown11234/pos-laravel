@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\SetLocaleMiddleware;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -14,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // SetLocalMiddleware ထည့်
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocaleMiddleware::class,
+            SetLocaleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

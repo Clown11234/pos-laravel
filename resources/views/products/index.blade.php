@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('messages.products') ?? 'Products Management' }}</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -15,11 +16,16 @@
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">{{ __('messages.products') ?? 'Products Management' }}</h2>
+        <h2 class="fw-bold text-dark mb-0">{{ __('messages.products') ?? 'Products Management' }}</h2>
         <div>
+            <a href="{{ route('products.pos') }}" class="btn btn-success px-4 fw-semibold shadow-sm me-2">
+                🛒 Go to POS Counter
+            </a>
+
             <button type="button" class="btn btn-primary px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
                 + Add Product
             </button>
+
             <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary ms-2 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
             <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary ms-1 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
         </div>
@@ -38,10 +44,13 @@
         <div class="card-body">
             <form action="{{ route('products.index') }}" method="GET" class="row g-3">
                 <div class="col-md-9">
-                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Search by product name or code...">
+                    <input type="text" name="search" class="form-control" value="{{ request('search') }}"
+                           placeholder="Search by product name (English/Myanmar) or product code...">
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-dark w-100 fw-semibold">Search</button>
+                    <button type="submit" class="btn btn-dark w-100 fw-semibold">
+                        {{ __('messages.search') ?? 'Search' }}
+                    </button>
                 </div>
             </form>
         </div>
@@ -51,30 +60,41 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle mb-0">
-                    <thead class="table-dark">
+                    <thead class="table-dark text-uppercase fs-7">
                     <tr>
                         <th class="ps-4">#</th>
-                        <th>Code</th>
-                        <th>Product Name</th>
+                        <th>{{ __('messages.code') ?? 'Code' }}</th>
+                        <th>{{ __('messages.products') ?? 'Product Name' }}</th>
                         <th>Category</th>
-                        <th>Selling Price</th>
-                        <th>Stock</th>
+                        <th>{{ __('messages.price') ?? 'Selling Price' }}</th>
+                        <th>{{ __('messages.stock') ?? 'Stock' }}</th>
                         <th class="text-center pe-4">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td class="ps-4 fw-semibold text-secondary">{{ $loop->iteration + ($products->firstItem() - 1) }}</td>
-                            <td><span class="badge bg-secondary px-2.5 py-1.5">{{ $product->product_code }}</span></td>
+                            <td class="ps-4 fw-semibold text-secondary">
+                                {{ $loop->iteration + ($products->firstItem() - 1) }}
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary px-2.5 py-1.5">{{ $product->product_code }}</span>
+                            </td>
                             <td class="fw-semibold text-dark">{{ $product->display_name }}</td>
                             <td><span class="text-muted">{{ $product->category->display_name ?? 'N/A' }}</span></td>
                             <td class="fw-bold text-success">{{ number_format($product->selling_price) }} MMK</td>
-                            <td>{{ $product->stock_quantity }}</td>
+                            <td>
+                                <span class="fw-semibold @if($product->stock_quantity <= $product->alert_quantity) text-danger @else text-dark @endif">
+                                    {{ $product->stock_quantity }}
+                                </span>
+                            </td>
                             <td class="text-center pe-4">
-                                <button type="button" class="btn btn-sm btn-outline-warning px-3 edit-btn" data-id="{{ $product->id }}">Edit</button>
+                                <button type="button" class="btn btn-sm btn-outline-warning px-3 me-1 edit-btn" data-id="{{ $product->id }}">
+                                    Edit
+                                </button>
 
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="d-inline">
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                      onsubmit="return confirm('Are you sure you want to move this product to trash?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger px-3">Delete</button>
@@ -82,12 +102,17 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="text-center py-5">No products found.</td></tr>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                No products found matching your search criteria.
+                            </td>
+                        </tr>
                     @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
+
         @if($products->hasPages())
             <div class="card-footer bg-white pt-3 border-0 d-flex justify-content-center">
                 {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
@@ -101,24 +126,54 @@
         <div class="modal-content border-0 shadow">
             <form id="productForm">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold">Add New Product</h5>
+                    <h5 class="modal-title fw-bold">Add New POS Product</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 py-4">
                     <input type="hidden" name="category_id" value="1">
-                    <div class="mb-3"><label class="form-label fw-semibold">Product Code</label><input type="text" name="product_code" class="form-control" required><div class="text-danger error-text product_code_error"></div></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Name (EN)</label><input type="text" name="name_en" class="form-control" required><div class="text-danger error-text name_en_error"></div></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Name (MM)</label><input type="text" name="name_mm" class="form-control" required><div class="text-danger error-text name_mm_error"></div></div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Cost Price</label><input type="number" name="cost_price" class="form-control" required><div class="text-danger error-text cost_price_error"></div></div>
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Selling Price</label><input type="number" name="selling_price" class="form-control" required><div class="text-danger error-text selling_price_error"></div></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Code / Barcode</label>
+                        <input type="text" name="product_code" class="form-control" placeholder="e.g. PROD-1001" required>
+                        <div class="text-danger fw-semibold error-text product_code_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Name (English)</label>
+                        <input type="text" name="name_en" class="form-control" placeholder="e.g. Coca Cola" required>
+                        <div class="text-danger fw-semibold error-text name_en_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Name (Myanmar)</label>
+                        <input type="text" name="name_mm" class="form-control" placeholder="ဥပမာ - ကိုကာကိုလာ" required>
+                        <div class="text-danger fw-semibold error-text name_mm_error"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Stock Qty</label><input type="number" name="stock_quantity" class="form-control" value="10" required></div>
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Alert Qty</label><input type="number" name="alert_quantity" class="form-control" value="5" required></div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Cost Price (ရင်းစျေး)</label>
+                            <input type="number" name="cost_price" class="form-control" placeholder="0" required>
+                            <div class="text-danger fw-semibold error-text cost_price_error"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Selling Price (ရောင်းစျေး)</label>
+                            <input type="number" name="selling_price" class="form-control" placeholder="0" required>
+                            <div class="text-danger fw-semibold error-text selling_price_error"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Stock Quantity</label>
+                            <input type="number" name="stock_quantity" class="form-control" value="10" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Alert Quantity</label>
+                            <input type="number" name="alert_quantity" class="form-control" value="5" required>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-success">Save Product</button></div>
+                <div class="modal-footer bg-light border-top-0">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success px-4">Save Product</button>
+                </div>
             </form>
         </div>
     </div>
@@ -135,19 +190,48 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 py-4">
-                    <div class="mb-3"><label class="form-label fw-semibold">Product Code</label><input type="text" id="edit_product_code" name="product_code" class="form-control" required><div class="text-danger error-text edit_product_code_error"></div></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Name (EN)</label><input type="text" id="edit_name_en" name="name_en" class="form-control" required><div class="text-danger error-text edit_name_en_error"></div></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Name (MM)</label><input type="text" id="edit_name_mm" name="name_mm" class="form-control" required><div class="text-danger error-text edit_name_mm_error"></div></div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Cost Price</label><input type="number" id="edit_cost_price" name="cost_price" class="form-control" required><div class="text-danger error-text edit_cost_price_error"></div></div>
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Selling Price</label><input type="number" id="edit_selling_price" name="selling_price" class="form-control" required><div class="text-danger error-text edit_selling_price_error"></div></div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Code</label>
+                        <input type="text" id="edit_product_code" name="product_code" class="form-control" required>
+                        <div class="text-danger error-text edit_product_code_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Name (EN)</label>
+                        <input type="text" id="edit_name_en" name="name_en" class="form-control" required>
+                        <div class="text-danger error-text edit_name_en_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Name (MM)</label>
+                        <input type="text" id="edit_name_mm" name="name_mm" class="form-control" required>
+                        <div class="text-danger error-text edit_name_mm_error"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Stock Qty</label><input type="number" id="edit_stock_quantity" name="stock_quantity" class="form-control" required></div>
-                        <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Alert Qty</label><input type="number" id="edit_alert_quantity" name="alert_quantity" class="form-control" required></div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Cost Price</label>
+                            <input type="number" id="edit_cost_price" name="cost_price" class="form-control" required>
+                            <div class="text-danger error-text edit_cost_price_error"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Selling Price</label>
+                            <input type="number" id="edit_selling_price" name="selling_price" class="form-control" required>
+                            <div class="text-danger error-text edit_selling_price_error"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Stock Qty</label>
+                            <input type="number" id="edit_stock_quantity" name="stock_quantity" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Alert Qty</label>
+                            <input type="number" id="edit_alert_quantity" name="alert_quantity" class="form-control" required>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-warning fw-bold">Update Product</button></div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Update Product</button>
+                </div>
             </form>
         </div>
     </div>
@@ -172,9 +256,12 @@
                 if (res.status === 201) {
                     bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
                     showAlert("Product saved successfully!", "success");
+                    document.getElementById('productForm').reset();
                     setTimeout(() => location.reload(), 1200);
                 } else if (res.status === 422) {
-                    for (const key in res.body.errors) { document.querySelector(`.${key}_error`).innerText = res.body.errors[key][0]; }
+                    for (const key in res.body.errors) {
+                        document.querySelector(`.${key}_error`).innerText = res.body.errors[key][0];
+                    }
                 }
             });
     });
@@ -184,14 +271,12 @@
         button.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
 
-            // Backend ဆီမှ ၎င်း Product ID ၏ Data ကို လှမ်းတောင်းခြင်း
             fetch(`/products/${id}/edit`, {
                 method: "GET",
                 headers: { "Accept": "application/json" }
             })
                 .then(res => res.json())
                 .then(product => {
-                    // ရလာသော ဒေတာများကို Edit Modal Form ထဲသို့ ဖြည့်သွင်းခြင်း
                     document.getElementById('edit_product_id').value = product.id;
                     document.getElementById('edit_product_code').value = product.product_code;
                     document.getElementById('edit_name_en').value = product.name_en;
@@ -201,8 +286,7 @@
                     document.getElementById('edit_stock_quantity').value = product.stock_quantity;
                     document.getElementById('edit_alert_quantity').value = product.alert_quantity;
 
-                    // Edit Modal ကို ဖွင့်လှစ်ပြသခြင်း
-                    new bootstrap.Modal(document.getElementById('edit_product_id').closest('.modal')).show();
+                    new bootstrap.Modal(document.getElementById('editProductModal')).show();
                 });
         });
     });
@@ -214,10 +298,10 @@
 
         const id = document.getElementById('edit_product_id').value;
         const formData = new FormData(this);
-        formData.append('_method', 'PUT'); // HTML Form သည် PUT တိုက်ရိုက်မရသဖြင့် Spoofing လုပ်ရသည်
+        formData.append('_method', 'PUT'); // Laravel Method Spoofing for PUT Request
 
         fetch(`/products/${id}`, {
-            method: "POST", // Method Spoofing ကြောင့် POST ဟု ပို့ရသည်
+            method: "POST",
             headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
             body: formData
         })
@@ -228,7 +312,9 @@
                     showAlert(res.body.message, "success");
                     setTimeout(() => location.reload(), 1200);
                 } else if (res.status === 422) {
-                    for (const key in res.body.errors) { document.querySelector(`.edit_${key}_error`).innerText = res.body.errors[key][0]; }
+                    for (const key in res.body.errors) {
+                        document.querySelector(`.edit_${key}_error`).innerText = res.body.errors[key][0];
+                    }
                 }
             });
     });
