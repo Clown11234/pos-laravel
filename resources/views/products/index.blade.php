@@ -19,7 +19,7 @@
         <h2 class="fw-bold text-dark mb-0">{{ __('messages.products') ?? 'Products Management' }}</h2>
         <div>
             <a href="{{ route('products.pos') }}" class="btn btn-success px-4 fw-semibold shadow-sm me-2">
-                🛒 Go to POS Counter
+                 Go to POS Counter
             </a>
 
             <button type="button" class="btn btn-primary px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
@@ -31,7 +31,7 @@
 
             {{--logout--}}
             <div class="d-flex align-items-center">
-                <span class="text-dark fw-bold me-3">👤 {{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
+                <span class="text-dark fw-bold me-3"> {{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
 
                 <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to logout?');">
                     @csrf

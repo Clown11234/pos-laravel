@@ -16,8 +16,15 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
 });
 
-// ၃။ အကယ်၍ ဝဘ်ဆိုက် root (/) ကိုနှိပ်လျှင် Login စာမျက်နှာသို့ တန်းပို့ရန်
 Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->isAdmin() || auth()->user()->isManager()) {
+            return redirect()->route('products.index');
+        }
+        return redirect()->route('products.pos');
+    }
+
+    // အကောင့်မဝင်ရသေးလျှင် Login စာမျက်နှာသို့ ပို့မည်
     return redirect()->route('login');
 });
 

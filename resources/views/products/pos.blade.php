@@ -17,7 +17,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 px-3">
         <div>
-            <h3 class="fw-bold text-dark mb-0">🛒 {{ __('messages.pos_counter') }}</h3>
+            <h3 class="fw-bold text-dark mb-0"> {{ __('messages.pos_counter') }}</h3>
         </div>
         <div class="d-flex align-items-center">
             <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary me-1 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
@@ -26,7 +26,7 @@
 
             {{-- Logout--}}
             <div class="d-flex align-items-center">
-                <span class="text-secondary fw-semibold me-3">👤 {{ auth()->user()->name }}</span>
+                <span class="text-secondary fw-semibold me-3"> {{ auth()->user()->name }}</span>
 
                 <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to logout?');">
                     @csrf
@@ -95,7 +95,7 @@
                         <h4 class="fw-bold text-danger mb-0" id="cartTotal">0 MMK</h4>
                     </div>
                     <button class="btn btn-success w-100 py-2.5 fw-bold text-uppercase shadow-sm fs-5" onclick="processCheckout()">
-                        📥 {{ __('messages.proceed_checkout') }}
+                        {{ __('messages.proceed_checkout') }}
                     </button>
                 </div>
             </div>
