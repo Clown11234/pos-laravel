@@ -22,6 +22,27 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+    ];
+    public function isAdmin(): bool
+    {
+        return $this->role === "admin";
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role === "manager";
+    }
+
+    public function isCashier(): bool
+    {
+        return $this->role === "cashier";
+    }
     protected function casts(): array
     {
         return [

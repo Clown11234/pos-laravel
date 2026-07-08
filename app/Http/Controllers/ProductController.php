@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Services\ProductService;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Http\Request;
@@ -28,7 +29,9 @@ class ProductController extends Controller
 
         $products = $this->productRepo->getAllPaginated(10, $filters);
 
-        return view('products.index', compact('products'));
+        $categories = \App\Models\Category::all();
+
+        return view('products.index', compact('products', 'categories'));
     }
 
     /**

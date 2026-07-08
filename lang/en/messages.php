@@ -20,4 +20,11 @@ return [
     'cart_empty' => 'No items in the cart.',
     'stock_out_error' => 'Cannot sell more than available stock!',
     'out_of_stock' => 'This product is out of stock.',
+    'login_title' => 'Sign in to start your session',
+    'email_address' => 'Email Address',
+    'password' => 'Password',
+    'remember_me' => 'Remember Me',
+    'login_btn' => 'LOGIN',
+    'auth_failed' => 'The provided credentials do not match our records.',
+    'logout_success' => 'Logged out successfully.',
 ];

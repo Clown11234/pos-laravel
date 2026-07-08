@@ -28,6 +28,19 @@
 
             <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary ms-2 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
             <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary ms-1 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
+
+            {{--logout--}}
+            <div class="d-flex align-items-center">
+                <span class="text-dark fw-bold me-3">👤 {{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
+
+                <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to logout?');">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-danger fw-semibold px-3 py-1.5 rounded-3 shadow-sm me-2">
+                         {{ app()->getLocale() == 'mm' ? 'အကောင့်ထွက်ရန်' : 'Logout' }}
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
 
@@ -43,14 +56,21 @@
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
             <form action="{{ route('products.index') }}" method="GET" class="row g-3">
-                <div class="col-md-9">
-                    <input type="text" name="search" class="form-control" value="{{ request('search') }}"
-                           placeholder="Search by product name (English/Myanmar) or product code...">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Search by name or code...">
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-dark w-100 fw-semibold">
-                        {{ __('messages.search') ?? 'Search' }}
-                    </button>
+                    <select name="category_id" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Categories (အုပ်စုအားလုံး)</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @if(request('category_id') == $category->id) selected @endif>
+                                {{ $category->name_en }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-dark w-100 fw-semibold">Filter Search</button>
                 </div>
             </form>
         </div>
@@ -130,7 +150,16 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 py-4">
-                    <input type="hidden" name="category_id" value="1">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Category (ကုန်ပစ္စည်းအုပ်စု)</label>
+                        <select name="category_id" class="form-select" required>
+                            <option value="" selected disabled>-- Select Category --</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name_en }} ({{ $category->name_mm }})</option>
+                            @endforeach
+                        </select>
+                        <div class="text-danger fw-semibold error-text category_id_error"></div>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product Code / Barcode</label>
@@ -189,6 +218,17 @@
                     <h5 class="modal-title fw-bold">Edit Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Product Category</label>
+                    <select id="edit_category_id" name="category_id" class="form-select" required>
+                        <option value="" disabled>-- Select Category --</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name_en }}</option>
+                        @endforeach
+                    </select>
+                    <div class="text-danger error-text edit_category_id_error"></div>
+                </div>
+
                 <div class="modal-body px-4 py-4">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product Code</label>
@@ -285,6 +325,7 @@
                     document.getElementById('edit_selling_price').value = product.selling_price;
                     document.getElementById('edit_stock_quantity').value = product.stock_quantity;
                     document.getElementById('edit_alert_quantity').value = product.alert_quantity;
+                    document.getElementById('edit_category_id').value = product.category_id;
 
                     new bootstrap.Modal(document.getElementById('editProductModal')).show();
                 });

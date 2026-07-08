@@ -23,6 +23,19 @@
             <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary me-1 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
             <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary me-3 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
 
+
+            {{-- Logout--}}
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fw-semibold me-3">👤 {{ auth()->user()->name }}</span>
+
+                <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to logout?');">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-danger fw-semibold px-3 py-1.5 shadow-sm me-3">
+                         {{ app()->getLocale() == 'mm' ? 'ထွက်ရန်' : 'Logout' }}
+                    </button>
+                </form>
+            </div>
+
             <a href="{{ route('products.index') }}" class="btn btn-outline-secondary fw-semibold">
                 ← {{ __('messages.back_to_products') }}
             </a>
