@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     // Cashier Role
     Route::middleware(['role:admin,manager,cashier'])->group(function () {
         Route::get('/pos', [ProductController::class, 'pos'])->name('products.pos');
+        Route::post('/pos/checkout', [OrderController::class, 'checkout'])->name('pos.checkout');
     });
 
 });
