@@ -29,7 +29,7 @@
 
             <div class="d-flex align-items-center me-3 bg-white px-3 py-1.5 rounded-3 shadow-sm border">
                 <span class="text-secondary fw-semibold me-3"><i class="fa-solid fa-user me-1"></i> {{ auth()->user()->name }}</span>
-                <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('အကောင့်ကနေ ထွက်မှာ သေჩာပါသလား?');">
+                <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('အကောင့်ကနေ ထွက်မှာ သေချာပါသလား');">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-danger fw-bold rounded-2">
                         <i class="fa-solid fa-right-from-bracket me-1"></i>{{ app()->getLocale() == 'mm' ? 'ထွက်ရန်' : 'Logout' }}
