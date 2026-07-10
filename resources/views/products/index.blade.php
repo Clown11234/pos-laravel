@@ -17,30 +17,32 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-dark mb-0">{{ __('messages.products') ?? 'Products Management' }}</h2>
-        <div>
+        <div class="d-flex align-items-center">
+
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-primary px-4 fw-semibold shadow-sm me-2">
+                <i class="fa-solid fa-chart-line me-1"></i> Go to Dashboard
+            </a>
             <a href="{{ route('products.pos') }}" class="btn btn-success px-4 fw-semibold shadow-sm me-2">
-                 Go to POS Counter
+                Go to POS Counter
             </a>
 
-            <button type="button" class="btn btn-primary px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <button type="button" class="btn btn-primary px-4 fw-semibold shadow-sm me-2" data-bs-toggle="modal" data-bs-target="#addProductModal">
                 + Add Product
             </button>
 
-            <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary ms-2 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
-            <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary ms-1 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
+            <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary ms-1 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
+            <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary ms-1 me-3 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
 
-            {{--logout--}}
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center bg-white px-3 py-1.5 rounded-3 shadow-sm border">
                 <span class="text-dark fw-bold me-3"> {{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
 
                 <form action="{{ route('logout') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to logout?');">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-danger fw-semibold px-3 py-1.5 rounded-3 shadow-sm me-2">
-                         {{ app()->getLocale() == 'mm' ? 'အကောင့်ထွက်ရန်' : 'Logout' }}
+                    <button type="submit" class="btn btn-sm btn-danger fw-semibold px-3 py-1.5 rounded-3 shadow-sm">
+                        {{ app()->getLocale() == 'mm' ? 'အကောင့်ထွက်ရန်' : 'Logout' }}
                     </button>
                 </form>
             </div>
-
         </div>
     </div>
 
@@ -218,18 +220,18 @@
                     <h5 class="modal-title fw-bold">Edit Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Product Category</label>
-                    <select id="edit_category_id" name="category_id" class="form-select" required>
-                        <option value="" disabled>-- Select Category --</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name_en }}</option>
-                        @endforeach
-                    </select>
-                    <div class="text-danger error-text edit_category_id_error"></div>
-                </div>
-
                 <div class="modal-body px-4 py-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Product Category</label>
+                        <select id="edit_category_id" name="category_id" class="form-select" required>
+                            <option value="" disabled>-- Select Category --</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name_en }}</option>
+                            @endforeach
+                        </select>
+                        <div class="text-danger error-text edit_category_id_error"></div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Product Code</label>
                         <input type="text" id="edit_product_code" name="product_code" class="form-control" required>
@@ -339,7 +341,7 @@
 
         const id = document.getElementById('edit_product_id').value;
         const formData = new FormData(this);
-        formData.append('_method', 'PUT'); // Laravel Method Spoofing for PUT Request
+        formData.append('_method', 'PUT');
 
         fetch(`/products/${id}`, {
             method: "POST",

@@ -62,4 +62,9 @@ class Product extends Model
     {
         return $query;
     }
+
+    public function scopeLowStock($query)
+    {
+        return $query->where('stock_quantity', '<=', 'alert_quantity');
+    }
 }

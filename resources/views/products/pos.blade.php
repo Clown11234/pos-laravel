@@ -21,8 +21,12 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 px-3">
         <div>
+            <a href="{{ route('dashboard') }}" class="btn btn-primary fw-semibold me-2">
+                <i class="fa-solid fa-chart-line me-1"></i> Dashboard
+            </a>
             <h3 class="fw-bold text-dark mb-0"><i class="fa-solid fa-cash-register me-2"></i>{{ __('messages.pos_counter') }}</h3>
         </div>
+
         <div class="d-flex align-items-center">
             <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary me-1 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
             <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary me-3 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>

@@ -4,8 +4,8 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\Auth\LoginController; // Auth အတွက် Controller အသစ်
-
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 // လူတိုင်းကြည့်လို့ရ
 
 // ၁။ ဘာသာစကား ပြောင်းလဲပေးမည့် Route
@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 
     // Cashier Role
