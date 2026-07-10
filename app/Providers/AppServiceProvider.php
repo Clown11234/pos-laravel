@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Eloquent\ProductRepository;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // For Blade
+        Blade::if('role', function (...$roles) {
+            return auth()->check() && in_array(auth()->user()->role, $roles);
+        });
     }
 }

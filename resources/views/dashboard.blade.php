@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - POS System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
+@extends('layouts.app')
 
-<div class="container py-5">
+@section('title', __('messages.dashboard'))
+@section('page_title', __('messages.dashboard_title'))
 
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="fw-bold text-dark mb-0">
-                <i class="fa-solid fa-chart-line me-2 text-primary"></i>
-                {{ __('messages.dashboard_title') }} </h2>
-            <small class="text-muted">
-                {{ __('messages.dashboard_subtitle') }}
-            </small>
-        </div>
-
-        <div class="d-flex align-items-center">
-            <a href="{{ route('lang.switch', 'en') }}" class="btn btn-sm btn-outline-primary me-1 @if(app()->getLocale() == 'en') active @endif">🇬🇧 English</a>
-            <a href="{{ route('lang.switch', 'mm') }}" class="btn btn-sm btn-outline-primary me-3 @if(app()->getLocale() == 'mm') active @endif">🇲🇲 မြန်မာ</a>
-
-            <a href="{{ route('products.pos') }}" class="btn btn-primary fw-bold py-2 px-4 shadow-sm">
-                <i class="fa-solid fa-cash-register me-2"></i>
-                {{ __('messages.go_to_pos') }}
-            </a>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-5">
+@section('content')
+    <div class="row g-4 mb-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm p-4 bg-white rounded-3 border-start border-success border-4">
                 <div class="d-flex align-items-center justify-content-between">
@@ -123,9 +95,4 @@
 
         </div>
     </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

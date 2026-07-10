@@ -7,7 +7,7 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function getAllPaginated(int $perPage = 10, array $filters = [])
+    public function getAllPaginated(int $perPage = 20, array $filters = [])
     {
         return Product::with('category')
             ->search($filters['search'] ?? null)
@@ -48,4 +48,5 @@ class ProductRepository implements ProductRepositoryInterface
         $product = Product::onlyTrashed()->findOrFail($id);
         return $product->restore();
     }
+
 }

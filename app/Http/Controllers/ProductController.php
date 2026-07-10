@@ -27,7 +27,7 @@ class ProductController extends Controller
             'category_id' => $request->get('category_id'),
         ];
 
-        $products = $this->productRepo->getAllPaginated(10, $filters);
+        $products = $this->productRepo->getAllPaginated(15, $filters);
 
         $categories = \App\Models\Category::all();
 
