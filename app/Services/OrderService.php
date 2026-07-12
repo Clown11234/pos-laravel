@@ -4,12 +4,25 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Repositories\Eloquent\OrderRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class OrderService
 {
+
+    protected $orderRepo;
+
+    public function __construct(OrderRepository $orderRepo)
+    {
+        $this->orderRepo = $orderRepo;
+    }
+
+    public function getSaleHistory()
+    {
+        return $this->orderRepo->getPaginated(15);
+    }
     // Stock နှုတ်
     public function processCheckout(array $items, float $paidAmount)
     {

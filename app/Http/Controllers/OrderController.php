@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\OrderService; // Service လွှဲသုံးခြင်း
 use Exception;
@@ -44,4 +45,11 @@ class OrderController extends Controller
             ], 422);
         }
     }
+
+    // History
+     public function history()
+     {
+         $orders = $this->orderService->getSaleHistory();
+         return view('orders.history', compact('orders'));
+     }
 }

@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/sales/history', [OrderController::class, 'history'])->name('sales.history');
     });
 
     // Cashier Role

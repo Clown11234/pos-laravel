@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Eloquent\ProductRepository;
+use App\Repositories\Eloquent\OrderRepository;
 use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //Interface နှင့် Concrete Class ကို Bind လုပ်
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
     }
 
     /**

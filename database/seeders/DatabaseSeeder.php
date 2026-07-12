@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
         // Seeder တွေ ပြန်ခေါ်
         $this->call([
             CategorySeeder::class,
-            ProductSeeder::class,
+//            ProductSeeder::class,
             UserSeeder::class,
         ]);
     }

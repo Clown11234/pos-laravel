@@ -94,6 +94,8 @@
             {{ __('messages.products') }}
         </a>
         @endrole
+        <a href="{{ route('sales.history') }}" class="{{ request()->routeIs('sales.history') ? 'active' : '' }}">History</a>
+
 
     </div>
 </div>
