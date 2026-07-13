@@ -5,6 +5,7 @@ return [
     'login' => 'Login',
     'dashboard' => 'Dashboard',
     'products' => 'Products',
+    'history' => 'History',
     'categories' => 'Categories',
     'success_save' => 'Data has been saved successfully.',
     'code' => 'Product Code',
@@ -46,4 +47,7 @@ return [
     'current_stock' => 'Current Stock',
     'pcs_left' => 'pcs left',
     'pcs' => 'pcs',
+    'cashier_name' => 'Cashier Name',
+    'paid_amount' => 'Paid Amount',
+    'change_amount' => 'Change Amount',
 ];

@@ -15,10 +15,10 @@
                         <thead class="table-light">
                         <tr>
                             <th class="ps-4 py-3">Invoice No</th>
-                            <th>Cashier Name</th>
-                            <th>Total Amount</th>
-                            <th>Paid Amount</th>
-                            <th>Change Amount</th>
+                            <th>{{ __('messages.cashier_name') }}</th>
+                            <th>{{ __('messages.total_amount') }}</th>
+                            <th>{{ __('messages.paid_amount') }}</th>
+                            <th>{{ __('messages.change_amount') }}</th>
                             <th>Date & Time</th>
                         </tr>
                         </thead>
