@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('messages.pos_counter'))
+@section('title', __('POS | pos_counter'))
 @section('page_title', __('messages.pos_counter'))
 
 @section('content')
@@ -262,8 +262,9 @@
 
             let receiptBody = `
                 <div class="text-center font-monospace">
-                    <h5 class="fw-bold mb-0">POS SUPERMARKET</h5>
+                    <h5 class="fw-bold mb-0">56 POS Store</h5>
                     <small class="text-muted">Yangon, Myanmar</small>
+                    <small class="text-muted">TEL: 09978882960</small>
                     <p class="my-2">--------------------------------</p>
                     <small class="d-block text-start">Invoice: #INV-${orderId}</small>
                     <small class="d-block text-start">Date: ${new Date().toLocaleString()}</small>
@@ -282,7 +283,7 @@
                         <span>Change:</span><span>${change.toLocaleString()} Ks</span>
                     </div>
                     <p class="my-2">--------------------------------</p>
-                    <h6 class="text-center fw-bold mt-3">${isMyanmar ? 'ကျေးဇူးတင်ပါတယ် ပြန်လာခဲ့နော်' : 'Thank you! Come again.'}</h6>
+                    <h6 class="text-center fw-bold mt-3">{{ __('messages.thank_you') }}</h6>
                 </div>
             `;
 

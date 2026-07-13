@@ -13,6 +13,8 @@ return [
     'stock' => 'ပစ္စည်းလက်ကျန်',
     'pos_counter' => 'POS အရောင်းကောင်တာ',
     'pos_counter_short' => 'POS ကောင်တာ',
+    'product_title' => 'ကုန်ပစ္စည်းများ',
+    'history_title' => 'အရောင်းမှတ်တမ်းများ',
     'back_to_products' => 'ကုန်ပစ္စည်းစာရင်းသို့ပြန်ရန်',
     'search_placeholder' => 'ကုန်ပစ္စည်းအမည် သို့မဟုတ် ကုဒ်ဖြင့် ရှာဖွေရန်...',
     'current_order' => 'စျေးခြင်းထောင်း',
@@ -50,4 +52,5 @@ return [
     'cashier_name' => 'ရောင်းခဲ့သူ၏ အမည်',
     'paid_amount' => 'ပေးငွေ',
     'change_amount' => 'ပြန်အမ်းငွေ',
+    'thank_you' => "ကျေးဇူးတင်ပါတယ်ဗျ။ ပြန်လာခဲ့ဦးနော်!"
 ];

@@ -13,6 +13,8 @@ return [
     'stock' => 'Stock',
     'pos_counter' => 'Live POS Cashier Counter',
     'pos_counter_short' => 'POS Counter',
+    'product_title' => 'Products',
+    'history_title' => 'Sales History',
     'back_to_products' => 'Back to Products',
     'search_placeholder' => 'Type to filter products by name or code...',
     'current_order' => 'Current Order (Cart)',
@@ -50,4 +52,5 @@ return [
     'cashier_name' => 'Cashier Name',
     'paid_amount' => 'Paid Amount',
     'change_amount' => 'Change Amount',
+    'thank_you' => 'Thank You! Please Come Again.',
 ];

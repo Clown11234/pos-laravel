@@ -16,7 +16,7 @@ class Order extends Model
         'change_amount',
     ];
 
-    // Prodect တစ်ခုတွင် Items အများကြီးရှိနိုင်
+    // Project တစ်ခုတွင် Items အများကြီးရှိနိုင်
     public function items()
     {
         return $this->hasMany(OrderItem::class);
@@ -28,10 +28,16 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    // Get users
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    // Get the items for order
+    public function orderItems() : HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
 }

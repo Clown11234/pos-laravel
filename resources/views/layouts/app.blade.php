@@ -69,7 +69,7 @@
 <div class="sidebar">
     <div class="sidebar-brand">
         <h4 class="fw-bold mb-0">
-            <i class="fa-solid fa-store me-2 text-yellow-400"></i> POS SYSTEM
+            <i class="fa-solid fa-store me-2 text-yellow-400"></i>POS SYSTEM
         </h4>
     </div>
     <div class="sidebar-menu">

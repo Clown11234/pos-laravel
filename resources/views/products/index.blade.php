@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', __('messages.products'))
-@section('page_title', __('messages.products'))
+@section('title', (' POS | products'))
+@section('page_title', __('messages.product_title'))
 
 @section('content')
     @if(session('success'))

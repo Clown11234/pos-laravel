@@ -17,6 +17,14 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
+    // Invoices Details
+    public function showInvoice($id)
+    {
+        $order = $this->orderService->getOrderDetails($id);
+
+        return view('orders.partials.invoice_modal', compact('order'));
+    }
+
     // Request လုပ်ရင် Service ထဲမှာတွက်
     public function checkout(Request $request)
     {

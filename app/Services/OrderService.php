@@ -19,9 +19,15 @@ class OrderService
         $this->orderRepo = $orderRepo;
     }
 
+    // Sales History
     public function getSaleHistory()
     {
         return $this->orderRepo->getPaginated(15);
+    }
+
+    // Invoice Details
+    public function getOrderDetails($id){
+        return $this->orderRepo->getOrderDetails($id);
     }
     // Stock နှုတ်
     public function processCheckout(array $items, float $paidAmount)
