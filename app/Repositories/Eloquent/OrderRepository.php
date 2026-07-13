@@ -9,7 +9,18 @@ class OrderRepository implements OrderRepositoryInterface
 {
     public function getPaginated($perPage = 15)
     {
-        return Order::with('user')->latest()->paginate($perPage);
+        $query = Order::with('user')->latest();
+
+        // Search Request ရှိမရှိ စစ်ဆေးပြီး Invoice ID ဖြင့် ရှာဖွေခြင်း
+        if (request()->has('search') && !empty(request('search'))) {
+            $search = request('search');
+            // #INV-5 သို့မဟုတ် 5 ဟု ရိုက်ရှာလို့ရအောင်
+            $searchId = str_replace('#INV-', '', $search);
+
+            $query->where('id', 'like', "%{$searchId}%");
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function getOrderDetails($id)

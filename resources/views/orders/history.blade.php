@@ -5,12 +5,33 @@
 
 @section('content')
     <div class="container-fluid">
+        <!-- 🔍 Search Bar & Title Section -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Sales History Log
+            </h5>
+
+            <!-- Search Form -->
+            <form action="{{ route('sales.history') }}" method="GET" class="d-flex gap-2 w-100 w-md-auto" style="max-width: 400px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" name="search" class="form-control border-start-0 ps-0"
+                           placeholder="Search ....."
+                           value="{{ request('search') }}">
+                    @if(request('search'))
+                        <a href="{{ route('sales.history') }}" class="btn btn-outline-secondary d-flex align-items-center">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    @endif
+                </div>
+                <button type="submit" class="btn btn-primary fw-bold px-4">Search</button>
+            </form>
+        </div>
+
+        <!-- 📊 Data Table Card -->
         <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-            <div class="card-header bg-white border-bottom py-3">
-                <h5 class="fw-bold mb-0 text-dark">
-                    <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Sales History Log
-                </h5>
-            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
@@ -44,9 +65,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
+                                <td colspan="7" class="text-center py-5 text-muted">
                                     <i class="fa-solid fa-folder-open fs-1 d-block mb-2 text-secondary"></i>
-                                    ယခုထိ အရောင်းမှတ်တမ်း မရှိသေးပါ။
+                                    {{ __('messages.error_not_found') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -54,15 +75,17 @@
                     </table>
                 </div>
             </div>
-            @if($orders->hasPages())
+
+            <!-- Pagination Links (Search Term မပျောက်ပျက်စေရန် appends လုပ်ထားပါသည်) -->
+            @if($orders->hasPages() || request('search'))
                 <div class="card-footer bg-white border-top py-3 d-flex justify-content-center">
-                    {{ $orders->links() }}
+                    {{ $orders->appends(request()->query())->links() }}
                 </div>
             @endif
         </div>
     </div>
 
-    <!-- 📦 Invoice Detail Bootstrap Modal Popup -->
+    <!--  Invoice Detail Bootstrap Modal Popup -->
     <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width: 400px;">
             <div class="modal-content border-0 shadow-lg">
@@ -70,7 +93,6 @@
                     <h6 class="modal-title fw-bold text-dark" id="invoiceModalLabel">
                         <i class="fa-solid fa-file-invoice me-2"></i>Invoice Detail
                     </h6>
-                    <!--  အပေါ်က ကန့်လန့်ဖြတ် ပိတ်သည့်ခလုတ် -->
                     <button type="button" class="btn-close custom-close-trigger" aria-label="Close"></button>
                 </div>
                 <div class="modal-body bg-white" id="invoiceModalBody">
@@ -80,7 +102,6 @@
                     </div>
                 </div>
                 <div class="modal-footer border-top py-2 bg-light d-flex justify-content-between">
-                    <!-- 🚪 အောက်ခြေက Close ပိတ်သည့်ခလုတ် -->
                     <button type="button" class="btn btn-sm btn-secondary fw-bold custom-close-trigger">Close</button>
                     <button type="button" class="btn btn-sm btn-success fw-bold px-3" onclick="window.print()">
                         <i class="fa-solid fa-print me-1"></i>Print Receipt
@@ -116,7 +137,6 @@
                 });
             });
 
-            // ၂။ ပိတ်မရသည့်ပြဿနာကို ဖြေရှင်းရန် - Close ခလုတ်အားလုံးကို လက်လှမ်းပိတ်ခိုင်းခြင်း
             const closeTriggers = document.querySelectorAll('.custom-close-trigger');
             closeTriggers.forEach(trigger => {
                 trigger.addEventListener('click', function () {
