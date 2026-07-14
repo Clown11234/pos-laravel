@@ -94,10 +94,13 @@
             {{ __('messages.products') }}
         </a>
         @endrole
+
+        @role('admin', 'manager')
         <a href="{{ route('sales.history') }}" class="{{ request()->routeIs('sales.history') ? 'active' : '' }}">
             <i class="fa-solid fa-clock-rotate-left"></i>
             {{ __('messages.history') }}
         </a>
+        @endrole
 
     </div>
 </div>

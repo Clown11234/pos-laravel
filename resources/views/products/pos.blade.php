@@ -334,7 +334,7 @@
                     <div class="d-flex justify-content-between text-success fw-bold">
                         <span>Change:</span><span>${change.toLocaleString()} Ks</span>
                     </div>
-                    <p class="my-2">--------------------------------</p>
+                    <p class="my-2">-------------------------</p>
                     <h6 class="text-center fw-bold mt-3">{{ __('messages.thank_you') }}</h6>
                 </div>
             `;

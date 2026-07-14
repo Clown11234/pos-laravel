@@ -39,8 +39,11 @@
 
     <!-- တွက်ချက်မှု အနှစ်ချုပ် အပိုင်း -->
     <div class="row g-2 small border-top border-dark pt-2 fw-bold">
-        <div class="col-7 text-uppercase">{{ __('messages.total_amount') }}:</div>
+        <div class="col-7 text-uppercase">{{ __('messages.total_amount') }} :</div>
         <div class="col-5 text-end text-success">{{ number_format($order->total_amount) }} MMK</div>
+
+        <div class="col-7 text-uppercase">{{ __('messages.discount_amount') }} :</div>
+        <div class="col-5 text-end text-success">{{ number_format($order->discount_amount) }} MMK</div>
 
         <div class="col-7 text-muted fw-normal">{{ __('messages.paid_amount') }}:</div>
         <div class="col-5 text-end text-muted fw-normal">{{ number_format($order->paid_amount) }} MMK</div>

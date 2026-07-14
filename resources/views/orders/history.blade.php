@@ -42,6 +42,7 @@
                             <th>{{ __('messages.total_amount') }}</th>
                             <th>{{ __('messages.paid_amount') }}</th>
                             <th>{{ __('messages.change_amount') }}</th>
+                            <th>{{ __('messages.discount_amount') }}</th>
                             <th>Date & Time</th>
                             <th class="text-center" width="150">Actions</th>
                         </tr>
@@ -54,6 +55,7 @@
                                 <td class="fw-bold text-success">{{ number_format($order->total_amount) }} MMK</td>
                                 <td class="text-muted">{{ number_format($order->paid_amount) }} MMK</td>
                                 <td class="text-muted">{{ number_format($order->paid_amount - $order->total_amount) }} MMK</td>
+                                <td class="text-muted">{{ number_format($order->discount_amount) }} MMK</td>
                                 <td class="text-secondary small">
                                     {{ $order->created_at->setTimezone('Asia/Yangon')->format('Y-m-d h:i A') }}
                                 </td>
@@ -76,7 +78,7 @@
                 </div>
             </div>
 
-            <!-- Pagination Links (Search Term မပျောက်ပျက်စေရန် appends လုပ်ထားပါသည်) -->
+            <!-- Pagination Links -->
             @if($orders->hasPages() || request('search'))
                 <div class="card-footer bg-white border-top py-3 d-flex justify-content-center">
                     {{ $orders->appends(request()->query())->links() }}
@@ -111,7 +113,6 @@
         </div>
     </div>
 
-    <!-- ⚡ AJAX နှင့် မော်ဒယ်ဖွင့်/ပိတ်လုပ်မည့် Pure JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const viewButtons = document.querySelectorAll('.view-invoice-btn');
@@ -119,7 +120,7 @@
             const invoiceModal = new bootstrap.Modal(invoiceModalElement);
             const modalBody = document.getElementById('invoiceModalBody');
 
-            // ၁။ View ခလုတ်နှိပ်လျှင် ဒေတာဆွဲပြီး Modal ဖွင့်ခြင်း
+            // View ခလုတ်နှိပ်လျှင် ဒေတာဆွဲပြီး Modal ဖွင့်ခြင်း
             viewButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     const orderId = this.getAttribute('data-id');
@@ -144,7 +145,6 @@
                 });
             });
 
-            // ၃။ Modal ၏ နောက်ခံမည်းမည်း (Backdrop) ကို နှိပ်လျှင်လည်း ပိတ်ပေးခြင်း
             invoiceModalElement.addEventListener('click', function (e) {
                 if (e.target === invoiceModalElement) {
                     invoiceModal.hide();
