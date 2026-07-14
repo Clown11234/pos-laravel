@@ -12,6 +12,7 @@ class Order extends Model
         'invoice_no',
         'user_id',
         'total_amount',
+        'discount_amount',
         'paid_amount',
         'change_amount',
     ];

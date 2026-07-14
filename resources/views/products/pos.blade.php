@@ -7,10 +7,11 @@
     <style>
         .product-card { cursor: pointer; transition: transform 0.2s; }
         .product-card:hover { transform: scale(1.03); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .cart-container { height: 50vh; overflow-y: auto; }
+        .cart-container { height: 45vh; overflow-y: auto; }
     </style>
 
     <div class="row g-3">
+        <!-- Products Grid Left Side -->
         <div class="col-md-7">
             <div class="card border-0 shadow-sm p-3 mb-3">
                 <div class="input-group">
@@ -36,6 +37,7 @@
             </div>
         </div>
 
+        <!--  Cart & Calculation -->
         <div class="col-md-5">
             <div class="card border-0 shadow-sm h-100 d-flex flex-column">
                 <div class="card-header bg-dark text-white fw-bold py-3">
@@ -60,14 +62,36 @@
                     </table>
                 </div>
 
+                <!-- Calculation Footer -->
                 <div class="card-footer bg-white border-top p-4 mt-auto">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold mb-0">{{ __('messages.total_amount') }}:</h5>
+                    <!-- Subtotal Section -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold text-secondary small">{{ __('messages.total_amount') }}:</span>
+                        <span class="fw-semibold text-dark" id="cartSubtotal">0 MMK</span>
+                    </div>
+
+                    <!-- Discount Amount -->
+                    <div class="row align-items-center mb-3 g-2">
+                        <div class="col-6">
+                            <label for="discount_amount" class="form-label small fw-bold text-muted mb-0"><i class="fa-solid fa-tag text-danger me-1"></i>{{ __('messages.discount_amount') }}</label>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <input type="number" id="discount_amount" class="form-control text-end fw-bold text-danger" value="0" min="0" placeholder="0">
+                                <span class="input-group-text bg-light text-muted small">MMK</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Section -->
+                    <div class="d-flex justify-content-between align-items-center border-top pt-2 mb-3">
+                        <h5 class="fw-bold mb-0">{{ __('messages.net_amount')}}</h5>
                         <h4 class="fw-bold text-danger mb-0" id="cartTotal">0 MMK</h4>
                     </div>
 
+                    <!-- Customer Paid Section -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold text-secondary"><i class="fa-solid fa-money-bill-wave me-1"></i>{{ app()->getLocale() == 'mm' ? 'ဝယ်သူပေးငွေ' : 'Customer Paid' }}</label>
+                        <label class="form-label fw-bold text-secondary">{{ __('messages.customer_paid_amount')}}</label>
                         <input type="number" id="paid_amount" class="form-control form-control-lg text-end fw-bold text-success" placeholder="0" min="0">
                     </div>
 
@@ -79,6 +103,7 @@
         </div>
     </div>
 
+    <!-- Voucher Receipt Modal -->
     <div class="modal fade" id="receiptModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -109,7 +134,7 @@
             emptyCart: "{{ __('messages.cart_empty') }}",
             stockOutError: "{{ __('messages.stock_out_error') }}",
             outOfStock: "{{ __('messages.out_of_stock') }}",
-            insufficientPaid: "{{ app()->getLocale() == 'mm' ? 'ဟေ့ဟေ့ ပိုက်ဆံလောက်အောင်ပေးလေ!' : 'Insufficient paid amount!' }}"
+            insufficientPaid: "{{ app()->getLocale() == 'mm' ? 'ဟေ့ဟေ့ ပိုက်ဆံလောက်အောင်ပေးလေ!' : 'Insufficient paid amount!' }};"
         };
 
         function addToCart(id, name, price, maxStock) {
@@ -145,26 +170,38 @@
             renderCart();
         }
 
-        function calculateCartTotal() {
+        function calculateCartSubtotal() {
             return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
         }
 
         function renderCart() {
             const tbody = document.getElementById('cartTableBody');
+            const subtotalEl = document.getElementById('cartSubtotal');
             const totalEl = document.getElementById('cartTotal');
+            const discountInput = document.getElementById('discount_amount');
 
             if (cart.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-5"><i class="fa-solid fa-folder-open d-block mb-2 fs-3"></i>${messages.emptyCart}</td></tr>`;
+                subtotalEl.innerText = "0 MMK";
                 totalEl.innerText = "0 MMK";
+                discountInput.value = 0;
                 return;
             }
 
             let html = '';
-            let grandTotal = calculateCartTotal();
+            let subtotal = calculateCartSubtotal();
+            let discount = parseFloat(discountInput.value) || 0;
+
+            // Discount က မူရင်းကျသင့်ငွေထက် မများအောင်လေ
+            if (discount > subtotal) {
+                discount = subtotal;
+                discountInput.value = discount;
+            }
+
+            let netTotal = subtotal - discount;
 
             cart.forEach(item => {
                 let itemTotal = item.price * item.qty;
-
                 html += `
                     <tr>
                         <td class="ps-3 fw-semibold text-dark">${item.name}</td>
@@ -182,8 +219,12 @@
             });
 
             tbody.innerHTML = html;
-            totalEl.innerText = grandTotal.toLocaleString() + " MMK";
+            subtotalEl.innerText = subtotal.toLocaleString() + " MMK";
+            totalEl.innerText = netTotal.toLocaleString() + " MMK";
         }
+
+        // Real Time Calculate Discount !
+        document.getElementById('discount_amount').addEventListener('input', renderCart);
 
         document.getElementById('posSearch').addEventListener('input', function(e) {
             let keyword = e.target.value.toLowerCase();
@@ -204,16 +245,20 @@
                 return;
             }
 
+            let subtotal = calculateCartSubtotal();
+            let discount = parseFloat(document.getElementById('discount_amount').value) || 0;
+            let netTotal = subtotal - discount;
             let paidAmount = parseFloat(document.getElementById('paid_amount').value);
-            let totalAmount = calculateCartTotal();
 
-            if (isNaN(paidAmount) || paidAmount < totalAmount) {
+            if (isNaN(paidAmount) || paidAmount < netTotal) {
                 alert(messages.insufficientPaid);
                 return;
             }
 
+            //  Payload ထဲသို့ discount_amount ထည့်သွင်းလိုက်ခြင်း
             let checkoutData = {
                 paid_amount: paidAmount,
+                discount_amount: discount,
                 items: cart.map(item => {
                     return { id: item.id, qty: item.qty };
                 })
@@ -230,10 +275,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        generateReceiptHTML(data.order_id, paidAmount, totalAmount);
+                        generateReceiptHTML(data.order_id, paidAmount, subtotal, discount, netTotal);
                         cart = [];
                         renderCart();
                         document.getElementById('paid_amount').value = '';
+                        document.getElementById('discount_amount').value = '0';
 
                         let myModal = new bootstrap.Modal(document.getElementById('receiptModal'));
                         myModal.show();
@@ -247,9 +293,8 @@
                 });
         }
 
-        function generateReceiptHTML(orderId, paid, total) {
+        function generateReceiptHTML(orderId, paid, subtotal, discount, total) {
             let change = paid - total;
-            let isMyanmar = "{{ app()->getLocale() }}" === 'mm';
             let itemsHTML = '';
 
             cart.forEach(item => {
@@ -265,18 +310,25 @@
                     <h5 class="fw-bold mb-0">56 POS Store</h5>
                     <small class="text-muted">Yangon, Myanmar</small>
                     <small class="text-muted">TEL: 09978882960</small>
-                    <p class="my-2">--------------------------------</p>
+                    <p class="my-2">-------------------------</p>
                     <small class="d-block text-start">Invoice: #INV-${orderId}</small>
                     <small class="d-block text-start">Date: ${new Date().toLocaleString()}</small>
-                    <p class="my-2">--------------------------------</p>
+                    <p class="my-2">-------------------------</p>
                 </div>
                 ${itemsHTML}
                 <div class="font-monospace">
-                    <p class="my-2">--------------------------------</p>
-                    <div class="d-flex justify-content-between fw-bold fs-6">
-                        <span>Total:</span><span>${total.toLocaleString()} Ks</span>
-                    </div>
+                    <p class="my-2">-------------------------</p>
                     <div class="d-flex justify-content-between text-muted" style="font-size: 13px;">
+                        <span>Subtotal:</span><span>${subtotal.toLocaleString()} Ks</span>
+                    </div>
+                    ${discount > 0 ? `
+                    <div class="d-flex justify-content-between text-danger" style="font-size: 13px;">
+                        <span>Discount:</span><span>-${discount.toLocaleString()} Ks</span>
+                    </div>` : ''}
+                    <div class="d-flex justify-content-between fw-bold fs-6 border-top pt-1 mt-1">
+                        <span>Net Total:</span><span>${total.toLocaleString()} Ks</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted" style="font-size: 13px; mt-1">
                         <span>Paid:</span><span>${paid.toLocaleString()} Ks</span>
                     </div>
                     <div class="d-flex justify-content-between text-success fw-bold">

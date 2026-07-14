@@ -31,13 +31,15 @@ class OrderController extends Controller
         $request->validate([
             'items'         => 'required|array|min:1',
             'paid_amount'   => 'required|numeric|min:0',
+            'discount_amount'   => 'nullable|numeric|min:0',
         ]);
 
         try {
             // Service ထဲမှာတွက်
             $order = $this->orderService->processCheckout(
                 $request->input('items'),
-                $request->input('paid_amount')
+                $request->input('paid_amount'),
+                $request->input('discount_amount' , 0)
             );
 
             return response()->json([

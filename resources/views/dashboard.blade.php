@@ -8,22 +8,26 @@
     <div class="row g-4 mb-4">
         <!-- Today's Sales Card -->
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 bg-white text-success rounded-3 position-relative overflow-hidden">
-                <div class="position-absolute end-0 top-0 p-4 opacity-25 fs-1">
-                    <i class="fa-solid fa-calendar-day"></i>
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3 border-start border-success border-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-1">
+                            {{ __('messages.daily_sales') }}
+                        </h6>
+                        <h3 class="fw-bold text-success mb-0">{{ number_format($todaySales) }} MMK</h3>
+                        <small class="text-muted d-block mt-2">{{ __('messages.daily_invoice_count') }}: {{ number_format($todayOrdersCount) }} စောင်</small>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success fs-3">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
                 </div>
-                <h6 class="text-muted text-uppercase fw-bold small mb-1">
-                    {{ __('messages.daily_sales') }}
-                </h6>
-                <h3 class="fw-bold mb-0">{{ number_format($todaySales) }} MMK</h3>
-                <small class="text-muted d-block mt-2">{{ __('messages.daily_invoice_count') }}: {{ number_format($todayOrdersCount) }} စောင်</small>
             </div>
         </div>
 
         <!-- This Month's Sales Card -->
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 bg-white rounded-3 border-start border-4">
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3 border-start border-success border-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <h6 class="text-muted text-uppercase fw-bold small mb-1">
@@ -85,7 +89,6 @@
                     <h5 class="fw-bold mb-0 text-dark">
                         <i class="fa-solid fa-trophy me-2 text-warning"></i>{{ __('messages.best_seller_product') }}
                     </h5>
-                    <span class="badge bg-light text-dark fw-bold border">All Time Best</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

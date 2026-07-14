@@ -6,12 +6,12 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
-// လူတိုင်းကြည့်လို့ရ
 
-// ၁။ ဘာသာစကား ပြောင်းလဲပေးမည့် Route
+
+// ဘာသာစကား ပြောင်းလဲပေးမည့် Route
 Route::get('lang/{locale}', [LanguageController::class, 'switchLanguage'])->name('lang.switch');
 
-// ၂။ Guest (အကောင့်မဝင်ရသေးသူများ) သာ ဝင်ခွင့်ရှိမည့် Login Routes
+// Guest
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
@@ -20,20 +20,21 @@ Route::middleware(['guest'])->group(function () {
 Route::get('/', function () {
     if (auth()->check()) {
         if (auth()->user()->isAdmin() || auth()->user()->isManager()) {
-            return redirect()->route('products.index');
+            return redirect()->route('dashboard');
         }
         return redirect()->route('products.pos');
     }
 
-    // အကောင့်မဝင်ရသေးလျှင် Login စာမျက်နှာသို့ ပို့မည်
+    // အကောင့်မဝင်ရသေးလျှင် Login စာမျက်နှာသို့ ပို
     return redirect()->route('login');
 });
 
-// Acc ရှိရင်ကြည့်လို့ရတယ်
+// Acc ရှိမှ ကြည့်လို့ရ
 Route::middleware(['auth'])->group(function () {
 
     // အကောင့်ပြန်ထွက်ရန် (Logout)
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/pos/checkout', [OrderController::class, 'checkout']);
 
     // Admin & Manager
     Route::middleware(['role:admin,manager'])->group(function () {

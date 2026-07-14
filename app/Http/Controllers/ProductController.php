@@ -108,7 +108,6 @@ class ProductController extends Controller
      */
     public function pos()
     {
-        // active() scope ကြောင့် error မတက်စေရန် ရိုးရိုးနှင့် Category Relation ကိုပဲ ဆွဲထုတ်လိုက်ပါသည်
         $products = \App\Models\Product::with('category')->get();
 
         return view('products.pos', compact('products'));

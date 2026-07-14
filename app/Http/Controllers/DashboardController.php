@@ -32,6 +32,9 @@ class DashboardController extends Controller
         // ဒီနေ့ ရောင်းခဲ့ရသော ပြေစာ အရေအတွက် (Today's Total Orders)
         $todayOrdersCount = Order::where('created_at', '>=', $today)->count();
 
+        // Total Discount
+        $totalDiscountGiven = Order::where('created_at', '>=', Carbon::now('Asia/Yangon')->startOfMonth())->sum('discount_amount');
+
         // အရောင်းရဆုံး ပစ္စည်း ၅ ခု စာရင်း (Top 5 Best Selling Products)
         $topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'), DB::raw('SUM(quantity * price) as total_revenue'))
             ->with('product')
@@ -48,7 +51,8 @@ class DashboardController extends Controller
             'todaySales',
             'monthSales',
             'todayOrdersCount',
-            'topProducts'
+            'topProducts',
+            'totalDiscountGiven'
         ));
     }
 }

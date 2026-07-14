@@ -65,6 +65,6 @@ class Product extends Model
 
     public function scopeLowStock($query)
     {
-        return $query->where('stock_quantity', '<=', 'alert_quantity');
+        return $query->whereRaw( 'stock_quantity <= alert_quantity');
     }
 }
