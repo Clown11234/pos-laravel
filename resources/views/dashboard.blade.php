@@ -82,7 +82,7 @@
     </div>
 
     <div class="row g-4 mb-4">
-        <!-- 🏆 Top Selling Products Table Section -->
+        <!-- Top Selling Products Table Section -->
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm rounded-3 h-100">
                 <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
@@ -119,7 +119,6 @@
                                         <div class="fw-bold text-dark text-truncate" style="max-width: 180px;">
                                             {{ app()->getLocale() == 'mm' ? ($item->product->name_mm ?? $item->product->name_en) : $item->product->name_en }}
                                         </div>
-                                        <small class="text-muted">SKU: {{ $item->product->sku ?? 'N/A' }}</small>
                                     </td>
                                     <td class="text-center fw-semibold text-primary">{{ number_format($item->total_qty) }} ခု</td>
                                     <td class="text-end fw-bold text-success pe-4">{{ number_format($item->total_revenue) }}</td>
@@ -139,7 +138,7 @@
             </div>
         </div>
 
-        <!-- ⚠️ (Original Feature) Low Stock Alerts Section -->
+        <!-- Low Stock Alerts Section -->
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-3 h-100">
                 <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
