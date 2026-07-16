@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Services\ProductService;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Http\Request;
@@ -34,9 +35,7 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories'));
     }
 
-    /**
-     * 📥 [မေ့ကျန်ခဲ့သော Method] Product အသစ်ကို Repository မှတစ်ဆင့် သိမ်းဆည်းရန် (AJAX)
-     */
+    // STORE PRODUCT
     public function store(Request $request)
     {
         // ရောင်းဈေးသည် အရင်းဈေးထက် ကြီးရမည်ဟူသော Validation အပါအဝင် စစ်ဆေးခြင်း
@@ -61,18 +60,38 @@ class ProductController extends Controller
         ], 201);
     }
 
-    /**
-     * ပြင်ဆင်ရန်အတွက် Single Product ဒေတာကို JSON ဖြင့် ပေးပို့ခြင်း
-     */
+    public function addStock(Request $request, $id)
+    {
+        $request->validate([
+            'added_quantity' => 'required|integer|min:1'
+        ]);
+
+        try{
+            $product = Product::findOrFail($id);
+
+            $product->increment('stock_quantity', $request->added_quantity);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product အသစ်ထပ်ထည့် ပြီးပါပြီ။',
+                'new_stock' => $product->stock_quantity
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'တစ်ခုခုတော့မှားနေပြီ။'
+            ], 500);
+        }
+    }
+
+    // EDIT
     public function edit($id)
     {
         $product = $this->productRepo->findById($id);
         return response()->json($product);
     }
 
-    /**
-     * ပြင်ဆင်လိုက်သော ဒေတာများကို သိမ်းဆည်းရန် (AJAX)
-     */
+    // UPDATE ( AFTER EDIT )
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -94,18 +113,14 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Soft Delete လုပ်ဆောင်ရန်
-     */
+    // DELETE
     public function destroy($id)
     {
         $this->productRepo->delete($id);
         return redirect()->back()->with('success', 'Product moved to trash.');
     }
 
-    /**
-     * Live POS Counter Screen
-     */
+    // POS
     public function pos()
     {
         $products = \App\Models\Product::with('category')->get();

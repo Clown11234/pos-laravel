@@ -157,7 +157,7 @@
         }
 
         function updateQty(id, amount) {
-            let item = cart.find(item => item.id === id);
+            let item = cart.find(item => item.id === id) // အရမ်းလေး များရင် လေးနိုင်
             if (item) {
                 item.qty += amount;
                 if (item.qty <= 0) {
