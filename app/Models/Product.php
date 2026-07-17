@@ -17,6 +17,7 @@ class Product extends Model
         'name_en',
         'name_mm',
         'product_code',
+        'supplier_id',
         'description',
         'cost_price',
         'selling_price',
@@ -24,6 +25,11 @@ class Product extends Model
         'alert_quantity',
         'image'
     ];
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 
     public function scopeSearch(Builder $query, ?string $keyword): Builder
     {

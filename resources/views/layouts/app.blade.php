@@ -102,6 +102,13 @@
         </a>
         @endrole
 
+        @role('admin', 'manager')
+        <a href="{{ route('suppliers.index') }}" class="{{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-truck"></i>
+            <span>Supplier</span>
+        </a>
+        @endrole
+
     </div>
 </div>
 

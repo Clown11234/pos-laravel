@@ -6,6 +6,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SupplierController;
 
 
 // ဘာသာစကား ပြောင်းလဲပေးမည့် Route
@@ -48,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/sales/history', [OrderController::class, 'history'])->name('sales.history');
         Route::get('/sales/invoice/{id}', [OrderController::class, 'showInvoice'])->name('sales.invoice.show');
+        Route::resource('/sales/suppliers', SupplierController::class);
     });
 
     // Cashier Role
