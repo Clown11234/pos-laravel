@@ -4,73 +4,64 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes;
 
+    // Mass Assignment Security
     protected $fillable = [
         'category_id',
+        'product_code',
         'name_en',
         'name_mm',
-        'product_code',
-        'supplier_id',
-        'description',
         'cost_price',
         'selling_price',
         'stock_quantity',
         'alert_quantity',
-        'image'
     ];
 
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
-    }
+    // N+1 Problem ကို ကာကွယ်ရန်
+    protected $with = ['category'];
 
-    public function scopeSearch(Builder $query, ?string $keyword): Builder
+    // Local Scope + Conditional Queries (when)
+    public function scopeSearch($query, ?string $search)
     {
-        if (!$keyword) {
-            return $query;
-        }
-
-        return $query->where(function (Builder $q) use ($keyword) {
-            $q->where('name_en', 'LIKE', "%{$keyword}%")
-                ->orWhere('name_mm', 'LIKE', "%{$keyword}%")
-                ->orWhere('product_code', 'LIKE', "%{$keyword}%");
+        return $query->when($search, function ($q) use ($search) {
+            return $q->where(function ($sub) use ($search) {
+                $sub->where('name_en', 'like', "%{$search}%")
+                    ->orWhere('name_mm', 'like', "%{$search}%")
+                    ->orWhere('product_code', 'like', "%{$search}%");
+            });
         });
     }
 
-    public function scopeOfCategory(Builder $query, ?int $categoryId): Builder
+    public function scopeOfCategory($query, ?int $categoryId)
     {
-        if (!$categoryId) {
-            return $query;
-        }
-        return $query->where('category_id', $categoryId);
+        return $query->when($categoryId, function ($q) use ($categoryId) {
+            return $q->where('category_id', $categoryId);
+        });
     }
 
-    // Product တစ်ခုမှ Category တစ်ခုရှိ
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function getDisplayNameAttribute(): string
+    // Accessor
+    // localization အပေါ်မှုတည်ပြီး Name ယူဖို့ ( View မှာ Condition မစစ်ရအောင်လို့ )
+    public function getNameAttribute(): string
     {
-        return app()->getLocale() === 'mm' ? $this->name_mm : $this->name_en;
+        return app()->getLocale() === 'mm'
+            ? ($this->name_mm ?? $this->name_en)
+            : $this->name_en;
     }
 
-
-    public function scopeActive(Builder $query)
+    // Stock Quantity နည်းရင် Text color ပြောင်း
+    public function getStockClassAttribute(): string
     {
-        return $query;
-    }
-
-    public function scopeLowStock($query)
-    {
-        return $query->whereRaw( 'stock_quantity <= alert_quantity');
+        return $this->stock_quantity <= $this->alert_quantity
+            ? 'text-danger fw-bold'
+            : 'text-dark fw-semibold';
     }
 }

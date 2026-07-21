@@ -2,28 +2,46 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Models\Product;
 
 class ProductService
 {
-    protected $productRepo;
-
-    // Dependency Injection ဖြင့် Interface ကို လှမ်းယူခြင်း
-    public function __construct(ProductRepositoryInterface $productRepo)
+    public function getFilteredProducts(array $filters, int $perPage = 15)
     {
-        $this->productRepo = $productRepo;
+        return Product::search($filters['search'] ?? null)
+            ->ofCategory($filters['category_id'] ?? null)
+            ->latest()
+            ->paginate($perPage);
     }
 
-    public function getProductList(int $perPage = 10)
+    public function getAllProductsForPos()
     {
-        return $this->productRepo->getAllPaginated($perPage);
+        return Product::latest()->get();
     }
 
     public function createProduct(array $data)
     {
-        // Business Logic Example: Product Code ကို အလိုအလျောက် စနစ်တကျ ပြုပြင်ဖန်တီးခြင်းမျိုး လုပ်နိုင်သည်
         $data['product_code'] = strtoupper($data['product_code']);
+        return Product::create($data);
+    }
 
-        return $this->productRepo->create($data);
+    public function getProductById(int $id)
+    {
+        return Product::findOrFail($id);
+    }
+
+    public function updateProduct(int $id, array $data)
+    {
+        $product = $this->getProductById($id);
+        $data['product_code'] = strtoupper($data['product_code']);
+        $product->update($data);
+        return $product;
+    }
+
+
+    public function deleteProduct(int $id)
+    {
+        $product = $this->getProductById($id);
+        return $product->delete();
     }
 }

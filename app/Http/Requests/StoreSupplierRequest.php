@@ -14,20 +14,18 @@ class StoreSupplierRequest extends FormRequest
 
     public function rules(): array
     {
-        $supplierParam = $this->route('supplier');
-
-        $supplierID = is_object($supplierParam) ? $supplierParam->id : $supplierParam;
+        $supplier = $this->route('supplier');
 
         return [
-            'name' => 'required|string|max:255',
-            'contact_person' => 'nullable|string|max:255',
+            'name' => ['required', 'string', 'max:255'],
+            'contact_person' => ['nullable', 'string', 'max:255'],
             'phone' => [
                 'required',
                 'string',
-                Rule::unique('suppliers', 'phone')->ignore($supplierID)
+                Rule::unique('suppliers', 'phone')->ignore($supplier?->id),
             ],
-            'address' => 'nullable|string',
-            'due_amount' => 'nullable|numeric|min:0'
+            'address' => ['nullable', 'string'],
+            'due_amount' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

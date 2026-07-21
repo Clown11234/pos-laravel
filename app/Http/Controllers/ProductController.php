@@ -3,128 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Product;
 use App\Services\ProductService;
-use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    protected $productRepo;
+    protected $productService;
 
-    public function __construct(ProductRepositoryInterface $productRepo)
+    // Service Injection
+    public function __construct(ProductService $productService)
     {
-        $this->productRepo = $productRepo;
+        $this->productService = $productService;
     }
 
-    /**
-     * Product List View with Search & Pagination
-     */
     public function index(Request $request)
     {
-        // URL မှ လာသော Search နှင့် Category ID များကို ဖတ်ယူခြင်း
-        $filters = [
-            'search' => $request->get('search'),
-            'category_id' => $request->get('category_id'),
-        ];
+        $filters = $request->only(['search', 'category_id']);
 
-        $products = $this->productRepo->getAllPaginated(15, $filters);
-
-        $categories = \App\Models\Category::all();
+        $products = $this->productService->getFilteredProducts($filters, 15);
+        $categories = Category::all();
 
         return view('products.index', compact('products', 'categories'));
     }
 
-    // STORE PRODUCT
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        // ရောင်းဈေးသည် အရင်းဈေးထက် ကြီးရမည်ဟူသော Validation အပါအဝင် စစ်ဆေးခြင်း
-        $validated = $request->validate([
-            'category_id'    => 'required|integer',
-            'product_code'   => 'required|string|unique:products,product_code',
-            'name_en'        => 'required|string|max:255',
-            'name_mm'        => 'required|string|max:255',
-            'cost_price'     => 'required|numeric|min:0',
-            'selling_price'  => 'required|numeric|gt:cost_price',
-            'stock_quantity' => 'required|integer|min:0',
-            'alert_quantity' => 'required|integer|min:0',
-        ]);
-
-        // Repository Architecture အတိုင်း ဆောက်လုပ်ခြင်း
-        $product = $this->productRepo->create($validated);
+        $product = $this->productService->createProduct($request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Product created successfully!',
+            'message' => __('messages.product_created_success'), // HardCode မသုံးရပါ
             'data'    => $product
         ], 201);
     }
 
-    public function addStock(Request $request, $id)
-    {
-        $request->validate([
-            'added_quantity' => 'required|integer|min:1'
-        ]);
-
-        try{
-            $product = Product::findOrFail($id);
-
-            $product->increment('stock_quantity', $request->added_quantity);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Product အသစ်ထပ်ထည့် ပြီးပါပြီ။',
-                'new_stock' => $product->stock_quantity
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'တစ်ခုခုတော့မှားနေပြီ။'
-            ], 500);
-        }
-    }
-
-    // EDIT
     public function edit($id)
     {
-        $product = $this->productRepo->findById($id);
+        $product = $this->productService->getProductById((int)$id);
         return response()->json($product);
     }
 
-    // UPDATE ( AFTER EDIT )
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $validated = $request->validate([
-            'name_en' => 'required|string|max:255',
-            'name_mm' => 'required|string|max:255',
-            'product_code' => 'required|string|unique:products,product_code,' . $id,
-            'cost_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|gt:cost_price',
-            'stock_quantity' => 'required|integer|min:0',
-            'alert_quantity' => 'required|integer|min:0',
-        ]);
-
-        $product = $this->productRepo->update($id, $validated);
+        $product = $this->productService->updateProduct((int)$id, $request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Product updated successfully!',
-            'data' => $product
+            'message' => __('messages.product_updated_success'),
+            'data'    => $product
         ]);
     }
 
-    // DELETE
     public function destroy($id)
     {
-        $this->productRepo->delete($id);
-        return redirect()->back()->with('success', 'Product moved to trash.');
+        $this->productService->deleteProduct((int)$id);
+        return redirect()->back()->with('success', __('messages.product_deleted_success'));
     }
 
-    // POS
     public function pos()
     {
-        $products = \App\Models\Product::with('category')->get();
-
+        $products = $this->productService->getAllProductsForPos();
         return view('products.pos', compact('products'));
     }
 }

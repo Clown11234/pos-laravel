@@ -103,9 +103,9 @@
         @endrole
 
         @role('admin', 'manager')
-        <a href="{{ route('suppliers.index') }}" class="{{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+        <a href="{{ route('sales.suppliers.index') }}" class="{{ request()->routeIs('sales.suppliers.*') ? 'active' : '' }}">
             <i class="fa-solid fa-truck"></i>
-            <span>Supplier</span>
+            <span>{{ __('messages.supplier_title') }}</span>
         </a>
         @endrole
 

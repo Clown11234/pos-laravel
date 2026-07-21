@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', (' POS | products'))
-@section('page_title', __('messages.product_title'))
+@section('title', __('messages.product_list'))
+@section('page_title', __('messages.product_list'))
 
 @section('content')
     @if(session('success'))
@@ -11,31 +11,33 @@
         </div>
     @endif
 
+    {{-- Filter & Search Form --}}
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
             <form action="{{ route('products.index') }}" method="GET" class="row g-3">
                 <div class="col-md-6">
-                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Search by name or code...">
+                    <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="{{ __('messages.search_placeholder') }}">
                 </div>
                 <div class="col-md-3">
                     <select name="category_id" class="form-select" onchange="this.form.submit()">
-                        <option value="">All Categories</option>
+                        <option value="">{{ __('messages.all_categories') }}</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" @if(request('category_id') == $category->id) selected @endif>
-                                {{ app()->getLocale() == 'mm' ? ($category->name_mm ?? $category->name_en) : $category->name_en }}
+                            <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                                {{ $category->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-3">
                     <button type="button" class="btn btn-primary w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="fa-solid fa-plus me-1"></i> Add Product
+                        <i class="fa-solid fa-plus me-1"></i> {{ __('messages.add_product') }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
+    {{-- Product Table Section --}}
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -48,7 +50,7 @@
                         <th>{{ __('messages.categories') }}</th>
                         <th>{{ __('messages.price') }}</th>
                         <th>{{ __('messages.stock') }}</th>
-                        <th class="text-center pe-4">Actions</th>
+                        <th class="text-center pe-4">{{ __('messages.actions') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -60,31 +62,37 @@
                             <td>
                                 <span class="badge bg-secondary px-2.5 py-1.5">{{ $product->product_code }}</span>
                             </td>
-                            <td class="fw-semibold text-dark">{{ app()->getLocale() == 'mm' ? $product->name_mm : $product->name_en }}</td>
-                            <td><span class="text-muted">{{ app()->getLocale() == 'mm' ? ($product->category->name_mm ?? $product->category->name_en) : $product->category->name_en }}</span></td>
-                            <td class="fw-bold text-success">{{ number_format($product->selling_price) }} MMK</td>
+
+                            <td class="fw-semibold text-dark">{{ $product->name }}</td>
+                            <td><span class="text-muted">{{ $product->category->name ?? '-' }}</span></td>
+
+                            <td class="fw-bold text-success">{{ number_format($product->selling_price) }} {{ __('messages.currency') }}</td>
+
                             <td>
-                                <span class="fw-semibold @if($product->stock_quantity <= $product->alert_quantity) text-danger @else text-dark @endif">
+                                <span class="{{ $product->stock_class }}">
                                     {{ $product->stock_quantity }}
                                 </span>
                             </td>
+
                             <td class="text-center pe-4">
                                 <button type="button" class="btn btn-sm btn-outline-warning px-3 me-1 edit-btn" data-id="{{ $product->id }}">
-                                    Edit
+                                    {{ __('messages.edit') }}
                                 </button>
 
                                 <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete?');" class="d-inline">
+                                      onsubmit="return confirm('{{ __('messages.confirm_delete') }}');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">
+                                        {{ __('messages.delete') }}
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="7" class="text-center text-muted py-5">
-                                No products found.
+                                {{ __('messages.no_products') }}
                             </td>
                         </tr>
                     @endforelse
@@ -100,73 +108,75 @@
         @endif
     </div>
 
+    {{-- Add Product Modal --}}
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <form id="productForm">
                     <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title fw-bold">Add New Product</h5>
+                        <h5 class="modal-title fw-bold">{{ __('messages.add_product') }}</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body px-4 py-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Category</label>
+                            <label class="form-label fw-semibold">{{ __('messages.categories') }}</label>
                             <select name="category_id" class="form-select" required>
-                                <option value="" selected disabled>-- Select Category --</option>
+                                <option value="" selected disabled>{{ __('messages.select_category') }}</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ app()->getLocale() == 'mm' ? ($category->name_mm ?? $category->name_en) : $category->name_en }}</option>
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             <div class="text-danger fw-semibold error-text category_id_error"></div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Code / Barcode</label>
-                            <input type="text" name="product_code" class="form-control" placeholder="e.g. PROD-1001" required>
+                            <label class="form-label fw-semibold">{{ __('messages.code') }}</label>
+                            <input type="text" name="product_code" class="form-control" placeholder="{{ __('messages.code_placeholder') }}" required>
                             <div class="text-danger fw-semibold error-text product_code_error"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Name (English)</label>
-                            <input type="text" name="name_en" class="form-control" placeholder="e.g. Coca Cola" required>
+                            <label class="form-label fw-semibold">{{ __('messages.product_name_en') }}</label>
+                            <input type="text" name="name_en" class="form-control" required>
                             <div class="text-danger fw-semibold error-text name_en_error"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Name (Myanmar)</label>
-                            <input type="text" name="name_mm" class="form-control" placeholder="ဥပမာ - ကိုကာကိုလာ">
+                            <label class="form-label fw-semibold">{{ __('messages.product_name_mm') }}</label>
+                            <input type="text" name="name_mm" class="form-control">
                             <div class="text-danger fw-semibold error-text name_mm_error"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Cost Price</label>
-                                <input type="number" name="cost_price" class="form-control" placeholder="0" required>
+                                <label class="form-label fw-semibold">{{ __('messages.cost_price') }}</label>
+                                <input type="number" name="cost_price" class="form-control" required>
                                 <div class="text-danger fw-semibold error-text cost_price_error"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Selling Price</label>
-                                <input type="number" name="selling_price" class="form-control" placeholder="0" required>
+                                <label class="form-label fw-semibold">{{ __('messages.price') }}</label>
+                                <input type="number" name="selling_price" class="form-control" required>
                                 <div class="text-danger fw-semibold error-text selling_price_error"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Stock Quantity</label>
-                                <input type="number" name="stock_quantity" class="form-control" value="10" required>
+                                <label class="form-label fw-semibold">{{ __('messages.stock_quantity') }}</label>
+                                <input type="number" name="stock_quantity" class="form-control" value="0" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Alert Quantity</label>
-                                <input type="number" name="alert_quantity" class="form-control" value="5" required>
+                                <label class="form-label fw-semibold">{{ __('messages.alert_quantity') }}</label>
+                                <input type="number" name="alert_quantity" class="form-control" value="0" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light border-top-0">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success px-4">Save Product</button>
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="submit" class="btn btn-success px-4">{{ __('messages.save') }}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    {{-- Edit Product Modal --}}
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -174,62 +184,62 @@
                     <input type="hidden" id="edit_product_id">
 
                     <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title fw-bold">Edit Product</h5>
+                        <h5 class="modal-title fw-bold">{{ __('messages.edit_product') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body px-4 py-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Category</label>
+                            <label class="form-label fw-semibold">{{ __('messages.categories') }}</label>
                             <select id="edit_category_id" name="category_id" class="form-select" required>
-                                <option value="" disabled>-- Select Category --</option>
+                                <option value="" disabled>{{ __('messages.select_category') }}</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ app()->getLocale() == 'mm' ? ($category->name_mm ?? $category->name_en) : $category->name_en }}</option>
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                             <div class="text-danger error-text edit_category_id_error"></div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Product Code</label>
+                            <label class="form-label fw-semibold">{{ __('messages.code') }}</label>
                             <input type="text" id="edit_product_code" name="product_code" class="form-control" required>
                             <div class="text-danger error-text edit_product_code_error"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Name (English)</label>
+                            <label class="form-label fw-semibold">{{ __('messages.product_name_en') }}</label>
                             <input type="text" id="edit_name_en" name="name_en" class="form-control" required>
                             <div class="text-danger error-text edit_name_en_error"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Name (Myanmar)</label>
+                            <label class="form-label fw-semibold">{{ __('messages.product_name_mm') }}</label>
                             <input type="text" id="edit_name_mm" name="name_mm" class="form-control">
                             <div class="text-danger error-text edit_name_mm_error"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Cost Price</label>
+                                <label class="form-label fw-semibold">{{ __('messages.cost_price') }}</label>
                                 <input type="number" id="edit_cost_price" name="cost_price" class="form-control" required>
                                 <div class="text-danger error-text edit_cost_price_error"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Selling Price</label>
+                                <label class="form-label fw-semibold">{{ __('messages.price') }}</label>
                                 <input type="number" id="edit_selling_price" name="selling_price" class="form-control" required>
                                 <div class="text-danger error-text edit_selling_price_error"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Stock Qty</label>
+                                <label class="form-label fw-semibold">{{ __('messages.stock_quantity') }}</label>
                                 <input type="number" id="edit_stock_quantity" name="stock_quantity" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Alert Qty</label>
+                                <label class="form-label fw-semibold">{{ __('messages.alert_quantity') }}</label>
                                 <input type="number" id="edit_alert_quantity" name="alert_quantity" class="form-control" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning fw-bold">Update Product</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="submit" class="btn btn-warning fw-bold">{{ __('messages.update') }}</button>
                     </div>
                 </form>
             </div>
@@ -241,9 +251,11 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+        // Product Form Submit
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
+
             fetch("{{ route('products.store') }}", {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
@@ -262,11 +274,13 @@
                 });
         });
 
+        // Edit Button Handler
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
+                const editUrl = "{{ route('products.edit', ':id') }}".replace(':id', id);
 
-                fetch(`/products/${id}/edit`, {
+                fetch(editUrl, {
                     method: "GET",
                     headers: { "Accept": "application/json" }
                 })
@@ -287,15 +301,18 @@
             });
         });
 
+        // Update Product Submit
         document.getElementById('editProductForm').addEventListener('submit', function(e) {
             e.preventDefault();
             document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
 
             const id = document.getElementById('edit_product_id').value;
+            const updateUrl = "{{ route('products.update', ':id') }}".replace(':id', id);
+
             const formData = new FormData(this);
             formData.append('_method', 'PUT');
 
-            fetch(`/products/${id}`, {
+            fetch(updateUrl, {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
                 body: formData
@@ -313,4 +330,3 @@
                 });
         });
     </script>
-@endpush

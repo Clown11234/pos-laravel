@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'POS | Suppliers')
-@section('page_title', __('messages.supplier_title') ?? 'Supplier Management')
+@section('title', 'POS | ' . __('messages.supplier_title'))
+@section('page_title', __('messages.supplier_title'))
 
 @section('content')
     {{-- Notification Alert --}}
@@ -17,11 +17,11 @@
         <div class="card-body">
             <div class="row align-items-center g-3">
                 <div class="col-md-9">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-truck-field me-2"></i>Supplier & Vendor Records</h5>
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-truck-field me-2"></i>{{ __('messages.supplier_records') }}</h5>
                 </div>
                 <div class="col-md-3">
                     <button type="button" class="btn btn-primary w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        <i class="fa-solid fa-plus me-1"></i> Add Supplier
+                        <i class="fa-solid fa-plus me-1"></i> {{ __('messages.add_supplier') }}
                     </button>
                 </div>
             </div>
@@ -36,12 +36,12 @@
                     <thead class="table-dark text-uppercase fs-7">
                     <tr>
                         <th class="ps-4">#</th>
-                        <th>Supplier Name</th>
-                        <th>Contact Person</th>
-                        <th>Phone Number</th>
-                        <th>Address</th>
-                        <th>Due Amount (အကြွေးကျန်)</th>
-                        <th class="text-center pe-4">Actions</th>
+                        <th>{{ __('messages.supplier_name') }}</th>
+                        <th>{{ __('messages.contact_person') }}</th>
+                        <th>{{ __('messages.phone_number') }}</th>
+                        <th>{{ __('messages.address') }}</th>
+                        <th>{{ __('messages.due_amount') }}</th>
+                        <th class="text-center pe-4">{{ __('messages.actions') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -53,7 +53,7 @@
                             <td class="fw-bold text-dark">{{ $supplier->name }}</td>
                             <td>{{ $supplier->contact_person ?? '-' }}</td>
                             <td><span class="badge bg-light text-dark border px-2.5 py-1.5"><i class="fa-solid fa-phone me-1 text-muted"></i>{{ $supplier->phone }}</span></td>
-                            <td class="text-muted">{{ Str::limit($supplier->address, 40) ?? '-' }}</td>
+                            <td class="text-muted">{{ \Illuminate\Support\Str::limit($supplier->address, 40) ?? '-' }}</td>
                             <td>
                                     <span class="fw-bold {{ $supplier->due_amount > 0 ? 'text-danger' : 'text-success' }}">
                                         {{ number_format($supplier->due_amount) }} MMK
@@ -61,21 +61,21 @@
                             </td>
                             <td class="text-center pe-4">
                                 <button type="button" class="btn btn-sm btn-outline-warning px-3 me-1 edit-btn" data-id="{{ $supplier->id }}">
-                                    Edit
+                                    {{ __('messages.edit') }}
                                 </button>
 
-                                <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete this supplier?');" class="d-inline">
+                                <form action="{{ route('sales.suppliers.destroy', $supplier->id) }}" method="POST"
+                                      onsubmit="return confirm('{{ __('messages.confirm_delete_supplier') }}');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">{{ __('messages.delete') }}</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="7" class="text-center text-muted py-5">
-                                No suppliers registered yet.
+                                {{ __('messages.no_suppliers') }}
                             </td>
                         </tr>
                     @endforelse
@@ -98,39 +98,39 @@
             <div class="modal-content border-0 shadow">
                 <form id="supplierForm">
                     <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title fw-bold">Add New Supplier</h5>
+                        <h5 class="modal-title fw-bold">{{ __('messages.add_new_supplier') }}</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body px-4 py-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Supplier/Company Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g. U Hla Aye Wholesaler" required>
+                            <label class="form-label fw-semibold">{{ __('messages.supplier_company_name') }}</label>
+                            <input type="text" name="name" class="form-control" placeholder="{{ __('messages.supplier_name_placeholder') }}" required>
                             <div class="text-danger fw-semibold error-text name_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Contact Person</label>
-                            <input type="text" name="contact_person" class="form-control" placeholder="e.g. Daw Aye Aye (Sales Manager)">
+                            <label class="form-label fw-semibold">{{ __('messages.contact_person') }}</label>
+                            <input type="text" name="contact_person" class="form-control" placeholder="{{ __('messages.contact_person_placeholder') }}">
                             <div class="text-danger fw-semibold error-text contact_person_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Phone Number</label>
-                            <input type="text" name="phone" class="form-control" placeholder="e.g. 09123456789" required>
+                            <label class="form-label fw-semibold">{{ __('messages.phone_number') }}</label>
+                            <input type="text" name="phone" class="form-control" placeholder="{{ __('messages.phone_placeholder') }}" required>
                             <div class="text-danger fw-semibold error-text phone_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Opening Balance / Due Amount</label>
+                            <label class="form-label fw-semibold">{{ __('messages.opening_balance') }}</label>
                             <input type="number" name="due_amount" class="form-control" value="0">
                             <div class="text-danger fw-semibold error-text due_amount_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Office Address</label>
-                            <textarea name="address" class="form-control" rows="3" placeholder="Enter complete address..."></textarea>
+                            <label class="form-label fw-semibold">{{ __('messages.office_address') }}</label>
+                            <textarea name="address" class="form-control" rows="3" placeholder="{{ __('messages.address_placeholder') }}"></textarea>
                             <div class="text-danger fw-semibold error-text address_error mt-1"></div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light border-top-0">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success px-4">Save Supplier</button>
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="submit" class="btn btn-success px-4">{{ __('messages.save_supplier') }}</button>
                     </div>
                 </form>
             </div>
@@ -144,39 +144,39 @@
                 <form id="editSupplierForm">
                     <input type="hidden" id="edit_supplier_id">
                     <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title fw-bold">Edit Supplier Details</h5>
+                        <h5 class="modal-title fw-bold">{{ __('messages.edit_supplier_details') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body px-4 py-4">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Supplier/Company Name</label>
+                            <label class="form-label fw-semibold">{{ __('messages.supplier_company_name') }}</label>
                             <input type="text" id="edit_name" name="name" class="form-control" required>
                             <div class="text-danger fw-semibold error-text edit_name_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Contact Person</label>
+                            <label class="form-label fw-semibold">{{ __('messages.contact_person') }}</label>
                             <input type="text" id="edit_contact_person" name="contact_person" class="form-control">
                             <div class="text-danger fw-semibold error-text edit_contact_person_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Phone Number</label>
+                            <label class="form-label fw-semibold">{{ __('messages.phone_number') }}</label>
                             <input type="text" id="edit_phone" name="phone" class="form-control" required>
                             <div class="text-danger fw-semibold error-text edit_phone_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Current Due Amount (MMK)</label>
+                            <label class="form-label fw-semibold">{{ __('messages.current_due_amount') }}</label>
                             <input type="number" id="edit_due_amount" name="due_amount" class="form-control" required>
                             <div class="text-danger fw-semibold error-text edit_due_amount_error mt-1"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Office Address</label>
+                            <label class="form-label fw-semibold">{{ __('messages.office_address') }}</label>
                             <textarea id="edit_address" name="address" class="form-control" rows="3"></textarea>
                             <div class="text-danger fw-semibold error-text edit_address_error mt-1"></div>
                         </div>
                     </div>
                     <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning fw-bold">Update Supplier</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="submit" class="btn btn-warning fw-bold">{{ __('messages.update_supplier') }}</button>
                     </div>
                 </form>
             </div>
@@ -198,8 +198,7 @@
             e.preventDefault();
             clearErrors();
 
-            // 💡 Laravel Route Helper ကိုသုံးပြီး Dynamic URL ယူလိုက်သဖြင့် Prefix မှားယွင်းမှု လုံးဝမရှိတော့ပါ
-            fetch("{{ route('suppliers.store') }}", {
+            fetch("{{ route('sales.suppliers.store') }}", {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
                 body: new FormData(this)
@@ -225,8 +224,7 @@
                 const id = e.target.getAttribute('data-id');
                 clearErrors();
 
-                // 💡 Edit URL ကိုလည်း Laravel Dynamic Route စနစ်ဖြင့် ပြောင်းလဲထားပါသည်
-                let editUrl = "{{ route('suppliers.edit', ':id') }}".replace(':id', id);
+                let editUrl = "{{ route('sales.suppliers.edit', ':id') }}".replace(':id', id);
 
                 fetch(editUrl, {
                     method: "GET",
@@ -256,8 +254,7 @@
             const formData = new FormData(this);
             formData.append('_method', 'PUT');
 
-            // 💡 Update URL ကိုလည်း Laravel Dynamic Route စနစ်ဖြင့် ကွက်တိပြောင်းလဲထားပါသည်
-            let updateUrl = "{{ route('suppliers.update', ':id') }}".replace(':id', id);
+            let updateUrl = "{{ route('sales.suppliers.update', ':id') }}".replace(':id', id);
 
             fetch(updateUrl, {
                 method: "POST",

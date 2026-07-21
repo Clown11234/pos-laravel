@@ -38,4 +38,12 @@ class Category extends Model
     {
         return $query->where('is_active', true);
     }
+
+    // ဒါလဲတူတူဘဲ Localization
+    public function getNameAttribute(): string
+    {
+        return app()->getLocale() === 'mm'
+            ? ($this->name_mm ?? $this->name_en)
+            : $this->name_en;
+    }
 }

@@ -12,7 +12,6 @@ use App\Http\Controllers\SupplierController;
 // ဘာသာစကား ပြောင်းလဲပေးမည့် Route
 Route::get('lang/{locale}', [LanguageController::class, 'switchLanguage'])->name('lang.switch');
 
-// Guest
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
@@ -26,33 +25,44 @@ Route::get('/', function () {
         return redirect()->route('products.pos');
     }
 
-    // အကောင့်မဝင်ရသေးလျှင် Login စာမျက်နှာသို့ ပို
     return redirect()->route('login');
 });
 
-// Acc ရှိမှ ကြည့်လို့ရ
+// Authenticated Routes
 Route::middleware(['auth'])->group(function () {
 
-    // အကောင့်ပြန်ထွက်ရန် (Logout)
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::post('/pos/checkout', [OrderController::class, 'checkout']);
 
     // Admin & Manager
     Route::middleware(['role:admin,manager'])->group(function () {
-        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-        Route::post('/products/{id}/add-stock', [ProductController::class, 'addStock'])->name('products.add.stock');
-        Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
-        Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // Product Management Routes
+        Route::prefix('products')->name('products.')->controller(ProductController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{product}/edit', 'edit')->name('edit');
+            Route::put('/{product}', 'update')->name('update');
+            Route::delete('/{product}', 'destroy')->name('destroy');
+        });
+
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/sales/history', [OrderController::class, 'history'])->name('sales.history');
         Route::get('/sales/invoice/{id}', [OrderController::class, 'showInvoice'])->name('sales.invoice.show');
-        Route::resource('/sales/suppliers', SupplierController::class);
+
+        Route::resource('/sales/suppliers', SupplierController::class)->names([
+            'index' => 'sales.suppliers.index',
+            'create' => 'sales.suppliers.create',
+            'store' => 'sales.suppliers.store',
+            'show' => 'sales.suppliers.show',
+            'edit' => 'sales.suppliers.edit',
+            'update' => 'sales.suppliers.update',
+            'destroy' => 'sales.suppliers.destroy',
+        ]);
     });
 
-    // Cashier Role
+    // Cashier, Admin & Manager Role
     Route::middleware(['role:admin,manager,cashier'])->group(function () {
         Route::get('/pos', [ProductController::class, 'pos'])->name('products.pos');
         Route::post('/pos/checkout', [OrderController::class, 'checkout'])->name('pos.checkout');
