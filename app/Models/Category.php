@@ -27,12 +27,6 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    // Languages
-    public function getDisplayNameAttribute(): string
-    {
-        return app()->getLocale() === 'mm' ? $this->name_mm : $this->name_en;
-    }
-
     // Category တွေ ယူမယ်
     public function scopeActive(Builder $query): Builder
     {
