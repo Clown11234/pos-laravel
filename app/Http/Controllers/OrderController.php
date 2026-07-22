@@ -2,64 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use Illuminate\Http\Request;
-use App\Services\OrderService; // Service လွှဲသုံးခြင်း
-use Exception;
+use App\Http\Requests\CheckoutRequest;
+use App\Services\OrderService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    protected $orderService;
+    protected OrderService $orderService;
 
-    // Dependency Injection ဖြင့် Service ကို ခေါ်ယူခြင်း
     public function __construct(OrderService $orderService)
     {
         $this->orderService = $orderService;
     }
 
-    // Invoices Details
-    public function showInvoice($id)
+    // Invoice Details
+    public function showInvoice(int $id): View
     {
         $order = $this->orderService->getOrderDetails($id);
 
         return view('orders.partials.invoice_modal', compact('order'));
     }
 
-    // Request လုပ်ရင် Service ထဲမှာတွက်
-    public function checkout(Request $request)
+    // POS Checkout
+    public function checkout(CheckoutRequest $request): JsonResponse
     {
-        $request->validate([
-            'items'         => 'required|array|min:1',
-            'paid_amount'   => 'required|numeric|min:0',
-            'discount_amount'   => 'nullable|numeric|min:0',
-        ]);
+        $order = $this->orderService->processCheckout($request->validated());
 
-        try {
-            // Service ထဲမှာတွက်
-            $order = $this->orderService->processCheckout(
-                $request->input('items'),
-                $request->input('paid_amount'),
-                $request->input('discount_amount' , 0)
-            );
-
-            return response()->json([
-                'success' => true,
-                'message' => 'ငွေရှင်းခြင်း အောင်မြင်ပြီးပါပြီ။',
-                'order_id' => $order->id
-            ], 201);
-
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 422);
-        }
+        return response()->json([
+            'success'  => true,
+            'message'  => __('messages.checkout_success'),
+            'order_id' => $order->id
+        ], 201);
     }
 
-    // History
-     public function history()
-     {
-         $orders = $this->orderService->getSaleHistory();
-         return view('orders.history', compact('orders'));
-     }
+    // Sales History
+    public function history(): View
+    {
+        $orders = $this->orderService->getSaleHistory();
+
+        return view('orders.history', compact('orders'));
+    }
 }

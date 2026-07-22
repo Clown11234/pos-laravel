@@ -17,28 +17,21 @@ class Order extends Model
         'change_amount',
     ];
 
-    // Project တစ်ခုတွင် Items အများကြီးရှိနိုင်
-    public function items()
+    // Order Item Relationship
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    // ဘယ် Cashier ရောင်းခဲ့လဲ
-    public function Cashier()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    // Get users
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    // Get the items for order
-    public function orderItems() : HasMany
+    // Order Items Relationship (Alias)
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    // Cashier
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

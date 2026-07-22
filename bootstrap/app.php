@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // SetLocalMiddleware ထည့်
+        // SetLocaleMiddleware
         $middleware->web(append: [
             SetLocaleMiddleware::class,
         ]);
@@ -23,7 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // API Route များ အပြင် AJAX/JSON Request များပါ JSON Response ပြန်ပ
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson() || $request->ajax()
         );
     })->create();
