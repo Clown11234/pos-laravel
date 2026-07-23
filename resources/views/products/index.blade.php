@@ -249,84 +249,113 @@
 
 @push('scripts')
     <script>
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        document.addEventListener("DOMContentLoaded", function () {
 
-        // Product Form Submit
-        document.getElementById('productForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
 
-            fetch("{{ route('products.store') }}", {
-                method: "POST",
-                headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
-                body: new FormData(this)
-            })
-                .then(response => response.json().then(data => ({ status: response.status, body: data })))
-                .then(res => {
-                    if (res.status === 201) {
-                        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-                        location.reload();
-                    } else if (res.status === 422) {
-                        for (const key in res.body.errors) {
-                            document.querySelector(`.${key}_error`).innerText = res.body.errors[key][0];
-                        }
-                    }
+            // Add Product Form
+            const productForm = document.getElementById('productForm');
+            if (productForm) {
+                productForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
+
+                    fetch("{{ route('products.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": csrfToken,
+                            "Accept": "application/json"
+                        },
+                        body: new FormData(this)
+                    })
+                        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                        .then(res => {
+                            if (res.status === 201) {
+                                const modalEl = document.getElementById('addProductModal');
+                                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.hide();
+                                location.reload();
+                            } else if (res.status === 422) {
+                                for (const key in res.body.errors) {
+                                    const errorEl = document.querySelector(`.${key}_error`);
+                                    if (errorEl) errorEl.innerText = res.body.errors[key][0];
+                                }
+                            }
+                        })
+                        .catch(err => console.error("Create Product Error:", err));
                 });
-        });
+            }
 
-        // Edit Button Handler
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const editUrl = "{{ route('products.edit', ':id') }}".replace(':id', id);
+            // Edit
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('edit-btn')) {
+                    const button = e.target;
+                    const id = button.getAttribute('data-id');
+                    const editUrl = "{{ route('products.edit', ':id') }}".replace(':id', id);
 
-                fetch(editUrl, {
-                    method: "GET",
-                    headers: { "Accept": "application/json" }
-                })
-                    .then(res => res.json())
-                    .then(product => {
-                        document.getElementById('edit_product_id').value = product.id;
-                        document.getElementById('edit_product_code').value = product.product_code;
-                        document.getElementById('edit_name_en').value = product.name_en;
-                        document.getElementById('edit_name_mm').value = product.name_mm;
-                        document.getElementById('edit_cost_price').value = product.cost_price;
-                        document.getElementById('edit_selling_price').value = product.selling_price;
-                        document.getElementById('edit_stock_quantity').value = product.stock_quantity;
-                        document.getElementById('edit_alert_quantity').value = product.alert_quantity;
-                        document.getElementById('edit_category_id').value = product.category_id;
+                    fetch(editUrl, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" }
+                    })
+                        .then(res => res.json())
+                        .then(product => {
+                            document.getElementById('edit_product_id').value = product.id;
+                            document.getElementById('edit_product_code').value = product.product_code;
+                            document.getElementById('edit_name_en').value = product.name_en;
+                            document.getElementById('edit_name_mm').value = product.name_mm;
+                            document.getElementById('edit_cost_price').value = product.cost_price;
+                            document.getElementById('edit_selling_price').value = product.selling_price;
+                            document.getElementById('edit_stock_quantity').value = product.stock_quantity;
+                            document.getElementById('edit_alert_quantity').value = product.alert_quantity;
+                            document.getElementById('edit_category_id').value = product.category_id;
 
-                        new bootstrap.Modal(document.getElementById('editProductModal')).show();
-                    });
+                            const editModalEl = document.getElementById('editProductModal');
+                            const editModal = bootstrap.Modal.getOrCreateInstance(editModalEl);
+                            editModal.show();
+                        })
+                        .catch(err => console.error("Fetch Product Error:", err));
+                }
             });
-        });
 
-        // Update Product Submit
-        document.getElementById('editProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
+            //  Update Product
+            const editProductForm = document.getElementById('editProductForm');
+            if (editProductForm) {
+                editProductForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
 
-            const id = document.getElementById('edit_product_id').value;
-            const updateUrl = "{{ route('products.update', ':id') }}".replace(':id', id);
+                    const id = document.getElementById('edit_product_id').value;
+                    const updateUrl = "{{ route('products.update', ':id') }}".replace(':id', id);
 
-            const formData = new FormData(this);
-            formData.append('_method', 'PUT');
+                    const formData = new FormData(this);
+                    formData.append('_method', 'PUT');
 
-            fetch(updateUrl, {
-                method: "POST",
-                headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
-                body: formData
-            })
-                .then(response => response.json().then(data => ({ status: response.status, body: data })))
-                .then(res => {
-                    if (res.status === 200) {
-                        bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
-                        location.reload();
-                    } else if (res.status === 422) {
-                        for (const key in res.body.errors) {
-                            document.querySelector(`.edit_${key}_error`).innerText = res.body.errors[key][0];
-                        }
-                    }
+                    fetch(updateUrl, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": csrfToken,
+                            "Accept": "application/json"
+                        },
+                        body: formData
+                    })
+                        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                        .then(res => {
+                            if (res.status === 200) {
+                                const editModalEl = document.getElementById('editProductModal');
+                                const editModal = bootstrap.Modal.getInstance(editModalEl) || new bootstrap.Modal(editModalEl);
+                                editModal.hide();
+                                location.reload();
+                            } else if (res.status === 422) {
+                                for (const key in res.body.errors) {
+                                    const errorEl = document.querySelector(`.edit_${key}_error`);
+                                    if (errorEl) errorEl.innerText = res.body.errors[key][0];
+                                }
+                            }
+                        })
+                        .catch(err => console.error("Update Product Error:", err));
                 });
+            }
         });
     </script>
+@endpush

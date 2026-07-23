@@ -18,9 +18,19 @@ class Supplier extends Model
         'due_amount',
     ];
 
-    // Supplier တစ်ယောက်မှာ Products တွေ များကြီးရှိနိုင်
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public static function createSupplier(array $data): self
+    {
+        $data['due_amount'] = $data['due_amount'] ?? 0;
+        return self::create($data);
+    }
+
+    public function updateSupplier(array $data): bool
+    {
+        return $this->update($data);
     }
 }

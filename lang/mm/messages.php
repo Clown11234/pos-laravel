@@ -49,7 +49,7 @@ return [
     'thank_you'                 => 'ကျေးဇူးတင်ပါတယ်ဗျ။ ပြန်လာခဲ့ဦးနော်!',
 
     // Sales History Page
-    'pos_sales_history'         => 'POS | အရောင်းရာဇဝင်',
+    'pos_sales_history'         => 'POS | အရောင်းမှတ်တမ်း',
     'sales_history_log'         => 'အရောင်းမှတ်တမ်း စာရင်း',
     'invoice_no'                => 'Invoice အမှတ်',
     'date_and_time'             => 'ရက်စွဲနှင့် အချိန်',
