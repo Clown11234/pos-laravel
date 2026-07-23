@@ -14,7 +14,7 @@ return [
     'logout_confirm'            => 'Are you sure you want to logout?',
     'logout_success'            => 'Logged out successfully.',
 
-    // Navigation & Common Actions
+    // Navigation & Common
     'dashboard'                 => 'Dashboard',
     'products'                  => 'Products',
     'history'                   => 'History',
@@ -47,6 +47,17 @@ return [
     'paid_amount'               => 'Paid Amount',
     'change_amount'             => 'Change Amount',
     'thank_you'                 => 'Thank You! Please Come Again.',
+
+    // Sales History Page
+    'pos_sales_history'         => 'POS | Sales History',
+    'sales_history_log'         => 'Sales History Log',
+    'invoice_no'                => 'Invoice No',
+    'date_and_time'             => 'Date & Time',
+    'view'                      => 'View',
+    'invoice_detail'            => 'Invoice Detail',
+    'close'                     => 'Close',
+    'print_receipt'             => 'Print Receipt',
+    'error_loading_invoice'     => 'Error loading invoice details.',
 
     // Dashboard Page
     'dashboard_title'           => 'Sales Management Dashboard',
@@ -83,13 +94,13 @@ return [
     'select_category'           => '-- Select Category --',
     'search_placeholder'        => 'Type to filter products by name or code...',
     'no_products'               => 'No products found.',
-    'currency'           => 'MMK',
-    'product_name_en'    => 'Product Name (English)',
-    'product_name_mm'    => 'Product Name (Myanmar)',
-    'cost_price'         => 'Cost Price',
-    'stock_quantity'     => 'Stock Quantity',
-    'alert_quantity'     => 'Alert Quantity',
-    'code_placeholder'   => 'e.g. PROD-1001',
+    'currency'                  => 'MMK',
+    'product_name_en'           => 'Product Name (English)',
+    'product_name_mm'           => 'Product Name (Myanmar)',
+    'cost_price'                => 'Cost Price',
+    'stock_quantity'            => 'Stock Quantity',
+    'alert_quantity'            => 'Alert Quantity',
+    'code_placeholder'          => 'e.g. PROD-1001',
 
     // Supplier Management
     'supplier_title'            => 'Supplier Management',
@@ -102,12 +113,12 @@ return [
     'phone_number'              => 'Phone Number',
     'address'                   => 'Address',
     'office_address'            => 'Office Address',
-    'due_amount'                => 'Due Amount (အကြွေးကျန်)',
+    'due_amount'                => 'Due Amount',
     'current_due_amount'        => 'Current Due Amount (MMK)',
     'opening_balance'           => 'Opening Balance / Due Amount',
     'no_suppliers'              => 'No suppliers registered yet.',
-    'supplier_name_placeholder' => 'e.g. U Hla Aye Wholesaler',
-    'contact_person_placeholder'=> 'e.g. Daw Aye Aye (Sales Manager)',
+    'supplier_name_placeholder' => 'Enter Supplier Name',
+    'contact_person_placeholder'=> 'Enter Your Contact Person',
     'phone_placeholder'         => 'e.g. 09123456789',
     'address_placeholder'       => 'Enter complete address...',
     'save_supplier'             => 'Save Supplier',

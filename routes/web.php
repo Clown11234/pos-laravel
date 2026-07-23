@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/sales/history', [OrderController::class, 'history'])->name('sales.history');
-        Route::get('/sales/invoice/{id}', [OrderController::class, 'showInvoice'])->name('sales.invoice.show');
+        Route::get('/sales/invoice/{id}', [OrderController::class, 'showInvoice'])->name('sales.invoice');
 
         Route::resource('/sales/suppliers', SupplierController::class)->names([
             'index' => 'sales.suppliers.index',

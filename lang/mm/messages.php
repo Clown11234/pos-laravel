@@ -14,7 +14,7 @@ return [
     'logout_confirm'            => 'အကောင့်ကနေ ထွက်မှာ သေချာပါသလား?',
     'logout_success'            => 'အကောင့်မှ အောင်မြင်စွာ ထွက်ပြီးပါပြီ။',
 
-    // Navigation & Common Actions
+    // Navigation & Common
     'dashboard'                 => 'Dashboard',
     'products'                  => 'ကုန်ပစ္စည်းများ',
     'history'                   => 'အရောင်းမှတ်တမ်းများ',
@@ -48,6 +48,17 @@ return [
     'change_amount'             => 'ပြန်အမ်းငွေ',
     'thank_you'                 => 'ကျေးဇူးတင်ပါတယ်ဗျ။ ပြန်လာခဲ့ဦးနော်!',
 
+    // Sales History Page
+    'pos_sales_history'         => 'POS | အရောင်းရာဇဝင်',
+    'sales_history_log'         => 'အရောင်းမှတ်တမ်း စာရင်း',
+    'invoice_no'                => 'Invoice အမှတ်',
+    'date_and_time'             => 'ရက်စွဲနှင့် အချိန်',
+    'view'                      => 'ကြည့်မည်',
+    'invoice_detail'            => 'Invoice အသေးစိတ်',
+    'close'                     => 'ပိတ်မည်',
+    'print_receipt'             => 'ဖြတ်ပိုင်း ထုတ်မည်',
+    'error_loading_invoice'     => 'Invoice အချက်အလက်များ ဆွဲယူရာတွင် အမှားအယွင်း ရှိနေပါသည်။',
+
     // Dashboard Page
     'dashboard_title'           => 'အရောင်းစီမံခန့်ခွဲမှု ဒက်ရှ်ဘုတ်',
     'dashboard_subtitle'        => 'နေ့စဉ် စတိုးလုပ်ငန်းစွမ်းဆောင်ရည်ခြေရာခံခြင်း',
@@ -66,7 +77,7 @@ return [
     'all_well_stocked'          => 'ပစ္စည်းအားလုံး လက်ကျန်လုံလောက်ပါတယ်။',
     'alert_threshold'           => 'သတိပေးရန် လက်ကျန်သတ်မှတ်ချက်',
     'current_stock'             => 'လက်ရှိ လက်ကျန်ပစ္စည်း',
-    'pcs_left'                  => 'ခု ကျန်ပါတယ်',
+    'pcs_left'                  => 'ခု ကျန်ပါသည်',
     'pcs'                       => 'ခု',
 
     // Products Management Page
@@ -83,17 +94,17 @@ return [
     'select_category'           => '-- အမျိုးအစား ရွေးချယ်ပါ --',
     'search_placeholder'        => 'ကုန်ပစ္စည်းအမည် သို့မဟုတ် ကုဒ်ဖြင့် ရှာဖွေရန်...',
     'no_products'               => 'ကုန်ပစ္စည်း မရှိသေးပါ။',
-    'currency'           => 'ကျပ်',
-    'product_name_en'    => 'ကုန်ပစ္စည်းအမည် (အင်္ဂလိပ်)',
-    'product_name_mm'    => 'ကုန်ပစ္စည်းအမည် (မြန်မာ)',
-    'cost_price'         => 'ရင်းနှီးစျေး (အဝယ်စျေး)',
-    'stock_quantity'     => 'လက်ကျန် အရေအတွက်',
-    'alert_quantity'     => 'သတိပေးရန် အရေအတွက်',
-    'code_placeholder'   => 'ဥပမာ - PROD-1001',
+    'currency'                  => 'ကျပ်',
+    'product_name_en'           => 'ကုန်ပစ္စည်းအမည် (အင်္ဂလိပ်)',
+    'product_name_mm'           => 'ကုန်ပစ္စည်းအမည် (မြန်မာ)',
+    'cost_price'                => 'ရင်းနှီးစျေး (အဝယ်စျေး)',
+    'stock_quantity'            => 'လက်ကျန် အရေအတွက်',
+    'alert_quantity'            => 'သတိပေးရန် အရေအတွက်',
+    'code_placeholder'          => 'ဥပမာ - PROD-1001',
 
     // Supplier Management
     'supplier_title'            => 'Supplier စီမံခန့်ခွဲမှု',
-    'supplier_records'          => 'Supplier & Vendor မှတ်တမ်းများ',
+    'supplier_records'          => 'Supplier မှတ်တမ်းများ',
     'add_supplier'              => 'Supplier ထည့်မည်',
     'add_new_supplier'          => 'Supplier အသစ်ထည့်မည်',
     'supplier_name'             => 'Supplier အမည်',
@@ -103,11 +114,11 @@ return [
     'address'                   => 'လိပ်စာ',
     'office_address'            => 'ရုံးလိပ်စာ',
     'due_amount'                => 'အကြွေးကျန်ငွေ',
-    'current_due_amount'        => 'လက်ရှိ အကြွေးကျန်ငွေ (ကျပ်)',
-    'opening_balance'           => 'အစမှတ်ပေးငွေ / အကြွေးကျန်ငွေ',
+    'current_due_amount'        => 'လက်ရှိ အကြွေးကျန်ငွေ',
+    'opening_balance'           => 'Opening Balance / အကြွေးကျန်ငွေ',
     'no_suppliers'              => 'Supplier မှတ်ပုံတင်ထားခြင်းမရှိသေးပါ။',
-    'supplier_name_placeholder' => 'ဥပမာ- ဦးလှအိုင် ကုန်စည်',
-    'contact_person_placeholder'=> 'ဥပမာ- ဒေါ်အိုင်အိုင် (အရောင်းမန်နေဂျာ)',
+    'supplier_name_placeholder' => ' နာမည်ထည့် ',
+    'contact_person_placeholder'=> ' နာမည်ထည့် ',
     'phone_placeholder'         => 'ဥပမာ- 09123456789',
     'address_placeholder'       => 'လိပ်စာအပြည့်အစုံရိုက်ထည့်ပါ...',
     'save_supplier'             => 'Supplier သိမ်းမည်',

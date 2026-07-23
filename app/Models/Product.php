@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes , HasFactory;
 
     // Mass Assignment Security
     protected $fillable = [
@@ -63,5 +64,10 @@ class Product extends Model
         return $this->stock_quantity <= $this->alert_quantity
             ? 'text-danger fw-bold'
             : 'text-dark fw-semibold';
+    }
+
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('stock_quantity', '<=', 'alert_quantity');
     }
 }
