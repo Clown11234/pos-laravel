@@ -17,7 +17,9 @@
         <div class="card-body">
             <div class="row align-items-center g-3">
                 <div class="col-md-9">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-truck-field me-2"></i>{{ __('messages.supplier_records') }}</h5>
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fa-solid fa-truck-field me-2"></i>{{ __('messages.supplier_records') }}
+                    </h5>
                 </div>
                 <div class="col-md-3">
                     <button type="button" class="btn btn-primary w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
@@ -52,12 +54,16 @@
                             </td>
                             <td class="fw-bold text-dark">{{ $supplier->name }}</td>
                             <td>{{ $supplier->contact_person ?? '-' }}</td>
-                            <td><span class="badge bg-light text-dark border px-2.5 py-1.5"><i class="fa-solid fa-phone me-1 text-muted"></i>{{ $supplier->phone }}</span></td>
+                            <td>
+                                <span class="badge bg-light text-dark border px-2.5 py-1.5">
+                                    <i class="fa-solid fa-phone me-1 text-muted"></i>{{ $supplier->phone }}
+                                </span>
+                            </td>
                             <td class="text-muted">{{ \Illuminate\Support\Str::limit($supplier->address, 40) ?? '-' }}</td>
                             <td>
-                                    <span class="fw-bold {{ $supplier->due_amount > 0 ? 'text-danger' : 'text-success' }}">
-                                        {{ number_format($supplier->due_amount) }} MMK
-                                    </span>
+                                <span class="fw-bold {{ $supplier->due_amount > 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ number_format($supplier->due_amount) }} MMK
+                                </span>
                             </td>
                             <td class="text-center pe-4">
                                 <button type="button" class="btn btn-sm btn-outline-warning px-3 me-1 edit-btn" data-id="{{ $supplier->id }}">
@@ -193,14 +199,17 @@
             document.querySelectorAll('.error-text').forEach(el => el.innerText = '');
         }
 
-        // --- ADD SUPPLIER AJAX ---
+        // Add Su9pplier
         document.getElementById('supplierForm').addEventListener('submit', function(e) {
             e.preventDefault();
             clearErrors();
 
             fetch("{{ route('sales.suppliers.store') }}", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                },
                 body: new FormData(this)
             })
                 .then(response => response.json().then(data => ({ status: response.status, body: data })))
@@ -218,7 +227,7 @@
                 .catch(err => console.error("Error adding supplier:", err));
         });
 
-        // --- EDIT BUTTON CLICK (Event Delegation Pattern) ---
+        //  EDIT BUTTON
         document.addEventListener('click', function(e) {
             if (e.target && e.target.classList.contains('edit-btn')) {
                 const id = e.target.getAttribute('data-id');
@@ -245,7 +254,7 @@
             }
         });
 
-        // --- UPDATE SUPPLIER AJAX ---
+        // UPDATE SUPPLIER
         document.getElementById('editSupplierForm').addEventListener('submit', function(e) {
             e.preventDefault();
             clearErrors();
@@ -258,7 +267,10 @@
 
             fetch(updateUrl, {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": csrfToken, "Accept": "application/json" },
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                },
                 body: formData
             })
                 .then(response => response.json().then(data => ({ status: response.status, body: data })))
@@ -276,7 +288,6 @@
                 .catch(err => console.error("Error updating supplier:", err));
         });
 
-        // Reset Add Form on Modal hidden
         document.getElementById('addSupplierModal').addEventListener('hidden.bs.modal', function () {
             document.getElementById('supplierForm').reset();
             clearErrors();
